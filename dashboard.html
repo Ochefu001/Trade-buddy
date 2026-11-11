@@ -139,6 +139,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .bk-h small{color:var(--mute);font-size:12px;letter-spacing:.07em;text-transform:uppercase;font-weight:600}
 .bk>p{color:#d5e1da;font-size:14.5px;margin:14px 0 2px}
 .bk .chips{margin:10px 0 16px}
+.bk>p+.go{margin-top:16px}
 .go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--brand);color:#03150a;font-weight:700;border-radius:999px;padding:13px;box-shadow:0 8px 24px rgba(34,197,94,.25)}
 .go:hover{background:var(--b2)}
 .go.off{background:rgba(255,255,255,.05);color:var(--mute);box-shadow:none;border:1px dashed var(--line);font-weight:600}
@@ -315,7 +316,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
   </div>
 
   <div class="view" id="v-brokers"><p class="note" style="margin:-4px 0 14px">Some links below are affiliate links. We may earn a commission if you open an account, at no extra cost to you.</p><div id="bl"></div><p class="note">Not financial advice or an endorsement. Check that a broker is regulated and available in your country, and read the fees and withdrawal terms before you deposit. Trading carries risk.</p></div>
-  <div class="view" id="v-prop"><div class="card"><h2>Prop firms</h2><div id="pl"></div><p class="note">A starting list, not an endorsement. Rules, prices and reputations change, so read the terms and recent reviews before paying for any challenge.</p></div></div>
+  <div class="view" id="v-prop"><p class="note" style="margin:-4px 0 14px">Some links below may be affiliate links. We may earn a commission if you sign up, at no extra cost to you.</p><div id="pl"></div><p class="note">Not financial advice or an endorsement. Prop firms are not regulated brokers, and the industry has seen many closures, so rules and reputations change. Read the terms and recent independent reviews, and only pay what you can afford to lose.</p></div>
   <div class="view" id="v-alerts"><div class="card"><h2>Notifications</h2><div id="al2"></div></div></div>
   <div class="view" id="v-profile"><div class="card"><h2>Profile</h2>
     <label>Display name</label><input id="pn"><button class="btn" id="pnb">Save name</button>
@@ -346,7 +347,16 @@ var BROKERS = [
   {n:"IC Markets",c:"#34d399",t:"Forex and CFD broker known for raw-spread accounts.",p:["MT4","MT5","cTrader"],aff:""},
   {n:"FXTM",c:"#60a5fa",t:"Forex and CFD broker on MetaTrader.",p:["MT4","MT5"],aff:""}
 ];
-var PROPS = [{n:"FTMO",u:"https://ftmo.com",d:"Funded trader challenge programme."},{n:"The5ers",u:"https://the5ers.com",d:"Funded trader programmes."},{n:"FundedNext",u:"https://fundednext.com",d:"Funded trader challenges."},{n:"Funding Pips",u:"https://fundingpips.com",d:"Funded trader challenges."}];
+var PROPS = [
+  {n:"FTMO",c:"#22d3ee",t:"One of the longest-running prop firms, with a two-step challenge.",aff:""},
+  {n:"The5ers",c:"#a3e635",t:"Funded programmes with a focus on growing accounts over time.",aff:""},
+  {n:"FundedNext",c:"#a78bfa",t:"Popular funded trader challenges with several account types.",aff:""},
+  {n:"Funding Pips",c:"#fbbf24",t:"Funded trader challenges known for flexible payout options.",aff:""},
+  {n:"E8 Markets",c:"#60a5fa",t:"Modern evaluation dashboards and a simple two-step challenge.",aff:""},
+  {n:"City Traders Imperium",c:"#fb7185",t:"UK-based funded trader programme.",aff:""},
+  {n:"FXIFY",c:"#34d399",t:"Funded trader challenges across several trading platforms.",aff:""},
+  {n:"Hantec Trader",c:"#f472b6",t:"Funded trader programme from the Hantec brand.",aff:""}
+];
 var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null, sp = 1, jpn = 1, jq = "", PER = 10;
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function setStatus(t, c) { $("st").textContent = t; $("dot").className = "dot " + c; }
@@ -393,13 +403,14 @@ $("jdt").value = today();
 
 /* lists */
 function links(id, arr) { $(id).innerHTML = arr.map(function (x) { return '<div class="li"><div><b>' + esc(x.n) + "</b><p>" + esc(x.d) + '</p></div><a href="' + esc(x.u) + '" target="_blank" rel="noopener noreferrer">Visit</a></div>'; }).join(""); }
-function brokers() {
-  $("bl").innerHTML = BROKERS.map(function (b) {
+function cards(id, arr, label) {
+  $(id).innerHTML = arr.map(function (b) {
     var btn = b.aff ? '<a class="go" href="' + esc(b.aff) + '" target="_blank" rel="sponsored noopener noreferrer">Open account <span aria-hidden="true">&rarr;</span></a>' : '<span class="go off">Link coming soon</span>';
-    return '<div class="bk"><div class="bk-h"><span class="mono" style="background:' + b.c + '">' + esc(b.n.charAt(0)) + '</span><div><b>' + esc(b.n) + '</b><small>Online broker</small></div></div><p>' + esc(b.t) + '</p><div class="chips">' + b.p.map(function (x) { return '<span class="chip">' + esc(x) + '</span>'; }).join("") + '</div>' + btn + '</div>';
+    var ch = b.p && b.p.length ? '<div class="chips">' + b.p.map(function (x) { return '<span class="chip">' + esc(x) + '</span>'; }).join("") + '</div>' : "";
+    return '<div class="bk"><div class="bk-h"><span class="mono" style="background:' + b.c + '">' + esc(b.n.charAt(0)) + '</span><div><b>' + esc(b.n) + '</b><small>' + label + '</small></div></div><p>' + esc(b.t) + '</p>' + ch + btn + '</div>';
   }).join("");
 }
-brokers(); links("pl", PROPS);
+cards("bl", BROKERS, "Online broker"); cards("pl", PROPS, "Prop firm");
 
 /* setups */
 function render() {
