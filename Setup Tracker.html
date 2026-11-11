@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Setup Tracker</title>
+<style>
+:root{--bg:#f3f5f4;--card:#fff;--ink:#14211c;--mute:#66746e;--line:#dbe2df;--acc:#0f766e;--w:#b45309;--p:#1d4ed8;--e:#0f766e;--x:#6b7280;--bad:#dc2626;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1513;--card:#16201d;--ink:#e8efec;--mute:#93a39c;--line:#26332f;--acc:#2dd4bf;--w:#fbbf24;--p:#60a5fa;--e:#2dd4bf;--x:#9ca3af;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#0e1513;--card:#16201d;--ink:#e8efec;--mute:#93a39c;--line:#26332f;--acc:#2dd4bf;--w:#fbbf24;--p:#60a5fa;--e:#2dd4bf;--x:#9ca3af;--bad:#f87171}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0 auto;background:var(--bg);color:var(--ink);font:16px/1.4 "Trebuchet MS",system-ui,sans-serif;max-width:600px;padding:14px}
+h1{font-size:22px;margin:4px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;margin-bottom:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}
+textarea{min-height:54px;resize:vertical}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px}
+button.main{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+:root:not([data-theme="light"]) button.main{color:#06201c}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.stats b{display:block;font-size:20px}.stats span{font-size:12px;color:var(--mute)}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px}
+.tabs button{white-space:nowrap;padding:8px 12px}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--x);border-radius:10px;padding:11px;margin-bottom:9px}
+.item.Waiting{border-left-color:var(--w)}.item.AtPOI{border-left-color:var(--p)}.item.Entered{border-left-color:var(--e)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pair{font-size:18px;font-weight:700}.tf{color:var(--mute);font-size:13px;margin-left:6px;font-weight:400}
+.Bullish,.Win{color:var(--e);font-weight:700}.Bearish,.Loss{color:var(--bad);font-weight:700}.BE{color:var(--mute);font-weight:700}
+.meta{color:var(--mute);font-size:14px;margin-top:4px;white-space:pre-wrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.acts button{padding:6px 10px;font-size:14px}
+.empty{color:var(--mute);text-align:center;padding:24px 8px}
+.note{color:var(--mute);font-size:13px}
+details summary{cursor:pointer;font-weight:700}
+</style>
+</head>
+<body>
+<h1>Setup Tracker</h1>
+
+<div class="card stats" id="stats"></div>
+
+<div class="card">
+  <div class="row3">
+    <input id="pair" placeholder="Pair e.g. XAUUSD" autocapitalize="characters">
+    <select id="bias"><option>Bullish</option><option>Bearish</option></select>
+    <select id="tf"><option>M15</option><option>H1</option><option selected>H4</option><option>D1</option></select>
+  </div>
+  <input id="poi" placeholder="POI (e.g. 1H OB at 1.0850)">
+  <div class="row3">
+    <input id="entry" inputmode="decimal" placeholder="Entry">
+    <input id="sl" inputmode="decimal" placeholder="Stop loss">
+    <input id="tp" inputmode="decimal" placeholder="Take profit">
+  </div>
+  <textarea id="conf" placeholder="Confirmation needed / notes"></textarea>
+  <div class="row"><button class="main" id="addBtn">Add setup</button><button id="cancelEdit" style="display:none">Cancel edit</button></div>
+</div>
+
+<input id="search" placeholder="Search pair or notes" style="margin-bottom:6px">
+<div class="tabs" id="tabs"></div>
+<div id="list"></div>
+
+<details class="card">
+  <summary>Backup and storage</summary>
+  <div class="note" id="storeNote">Checking storage...</div>
+  <div class="row"><button id="exportBtn">Save backup file</button><button id="copyBtn">Copy backup</button></div>
+  <textarea id="importBox" placeholder="Paste a backup here to restore"></textarea>
+  <button id="importBtn">Restore from pasted backup</button>
+  <div class="note" id="msg"></div>
+</details>
+
+<script>
+var STATUS=["Waiting","At POI","Entered","Done"],key="setups-v2",items=[],filter="Active",editId=null,dbDoc=null,mode="this browser only";
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function cls(s){return s.replace(" ","")}
+function say(t){$("msg").textContent=t}
+function save(){
+  try{localStorage.setItem(key,JSON.stringify(items))}catch(e){}
+  if(dbDoc){dbDoc.set({items:items}).catch(function(){say("Cloud save failed. Your phone copy is still safe.")})}
+}
+function loadLocal(){try{items=JSON.parse(localStorage.getItem(key)||localStorage.getItem("setups-v1"))||[]}catch(e){items=[]}}
+function rr(i){var e=+i.entry,s=+i.sl,t=+i.tp;if(!e||!s||!t||e==s)return "";return (Math.abs(t-e)/Math.abs(e-s)).toFixed(1)}
+function stats(){
+  var a=items.filter(function(i){return i.s!="Done"}).length,en=items.filter(function(i){return i.s=="Entered"}).length;
+  var w=items.filter(function(i){return i.r=="Win"}).length,l=items.filter(function(i){return i.r=="Loss"}).length;
+  var wr=(w+l)?Math.round(100*w/(w+l))+"%":"-";
+  $("stats").innerHTML='<div><b>'+a+'</b><span>Active</span></div><div><b>'+en+'</b><span>Live</span></div><div><b>'+(w+"/"+l)+'</b><span>Win/Loss</span></div><div><b>'+wr+'</b><span>Win rate</span></div>'}
+function render(){
+  stats();
+  var tabs=["Active"].concat(STATUS).concat(["All"]),q=$("search").value.trim().toLowerCase();
+  function ok(i,t){return (t=="All"||(t=="Active"?i.s!="Done":i.s==t))}
+  $("tabs").innerHTML=tabs.map(function(t){return '<button class="'+(t==filter?"on":"")+'" data-t="'+t+'">'+t+' ('+items.filter(function(i){return ok(i,t)}).length+')</button>'}).join("");
+  var shown=items.filter(function(i){return ok(i,filter)&&(!q||(i.p+" "+(i.c||"")+" "+(i.poi||"")).toLowerCase().indexOf(q)>-1)});
+  if(!shown.length){$("list").innerHTML='<div class="empty">Nothing here yet.</div>';return}
+  $("list").innerHTML=shown.map(function(i){
+    var next=STATUS[Math.min(STATUS.indexOf(i.s)+1,3)],r=rr(i);
+    var lv=[i.entry&&"Entry "+i.entry,i.sl&&"SL "+i.sl,i.tp&&"TP "+i.tp,r&&"RR 1:"+r].filter(Boolean).join("  ");
+    return '<div class="item '+cls(i.s)+'"><div class="top"><span class="pair">'+esc(i.p)+'<span class="tf">'+esc(i.tf||"")+'</span></span><span class="'+i.b+'">'+i.b+'</span></div>'+
+    '<div class="meta">POI: '+esc(i.poi||"-")+'\nStatus: '+i.s+(i.r?' · <span class="'+i.r+'">'+i.r+'</span>':'')+' · '+i.d+(lv?'\n'+esc(lv):'')+(i.c?'\n'+esc(i.c):'')+'</div>'+
+    '<div class="acts">'+(i.s!="Done"?'<button data-a="next" data-id="'+i.id+'">Mark '+next+'</button>':'')+
+    (i.s=="Entered"||i.s=="Done"?'<button data-a="Win" data-id="'+i.id+'">Win</button><button data-a="Loss" data-id="'+i.id+'">Loss</button><button data-a="BE" data-id="'+i.id+'">BE</button>':'')+
+    '<button data-a="edit" data-id="'+i.id+'">Edit</button><button data-a="inv" data-id="'+i.id+'">Invalidated</button><button data-a="del" data-id="'+i.id+'">Delete</button></div></div>'}).join("")}
+var F=["pair","poi","entry","sl","tp","conf"];
+function clearForm(){F.forEach(function(x){$(x).value=""});editId=null;$("addBtn").textContent="Add setup";$("cancelEdit").style.display="none"}
+$("addBtn").onclick=function(){
+  var p=$("pair").value.trim().toUpperCase();if(!p){$("pair").focus();return}
+  var v={p:p,b:$("bias").value,tf:$("tf").value,poi:$("poi").value.trim(),entry:$("entry").value.trim(),sl:$("sl").value.trim(),tp:$("tp").value.trim(),c:$("conf").value.trim()};
+  if(editId){var it=items.filter(function(i){return i.id==editId})[0];for(var k in v)it[k]=v[k]}
+  else{v.id=Date.now();v.s="Waiting";v.d=new Date().toLocaleDateString();items.unshift(v)}
+  clearForm();save();render()};
+$("cancelEdit").onclick=clearForm;
+$("search").oninput=render;
+$("tabs").onclick=function(e){var t=e.target.getAttribute("data-t");if(t){filter=t;render()}};
+$("list").onclick=function(e){
+  var a=e.target.getAttribute("data-a"),id=+e.target.getAttribute("data-id");if(!a)return;
+  var it=items.filter(function(i){return i.id==id})[0];
+  if(a=="next")it.s=STATUS[Math.min(STATUS.indexOf(it.s)+1,3)];
+  else if(a=="inv"){it.s="Done";it.r="";it.c=(it.c?it.c+"\n":"")+"Invalidated"}
+  else if(a=="Win"||a=="Loss"||a=="BE"){it.r=it.r==a?"":a;it.s="Done"}
+  else if(a=="edit"){$("pair").value=it.p;$("bias").value=it.b;$("tf").value=it.tf||"H4";$("poi").value=it.poi||"";$("entry").value=it.entry||"";$("sl").value=it.sl||"";$("tp").value=it.tp||"";$("conf").value=it.c||"";editId=id;$("addBtn").textContent="Save changes";$("cancelEdit").style.display="";window.scrollTo(0,0);return}
+  else if(a=="del"){if(!confirm("Delete "+it.p+"?"))return;items=items.filter(function(i){return i.id!=id})}
+  save();render()};
+function backup(){return JSON.stringify({app:"setup-tracker",items:items})}
+$("copyBtn").onclick=function(){try{navigator.clipboard.writeText(backup()).then(function(){say("Backup copied. Paste it into a note or WhatsApp to yourself.")},function(){say("Copy blocked. Use Save backup file.")})}catch(e){say("Copy blocked. Use Save backup file.")}};
+$("exportBtn").onclick=function(){
+  claude.use("downloads").then(function(d){if(!d){say("File saving is unavailable here. Use Copy backup.");return}
+    return d.save({filename:"setups-backup.json",data:backup()}).then(function(){say("Backup saved.")},function(){say("Save cancelled.")})})};
+$("importBtn").onclick=function(){
+  try{var o=JSON.parse($("importBox").value);if(!o||!Array.isArray(o.items))throw 0;
+    if(!confirm("Replace current setups with this backup?"))return;items=o.items;save();render();$("importBox").value="";say("Restored "+items.length+" setups.")}
+  catch(e){say("That backup is not valid.")}};
+function note(){$("storeNote").textContent="Saved in: "+mode+". "+(dbDoc?"Also kept on your claude.ai account, private to you.":"Clearing this browser's site data erases it, so back up now and then.")}
+loadLocal();render();note();
+var done=false;
+Promise.all([claude.use("db"),claude.use("user")]).then(function(r){
+  var db=r[0],u=r[1];if(!db||!u)return;
+  return u.id().then(function(id){
+    var ref=db.collection("data/users/"+id).doc("tracker"),t=setTimeout(function(){},10000);
+    return ref.get().then(function(s){clearTimeout(t);
+      if(s.exists&&s.data()&&Array.isArray(s.data().items)){
+        var cloud=s.data().items,have={};cloud.forEach(function(i){have[i.id]=1});
+        items.forEach(function(i){if(!have[i.id])cloud.push(i)});items=cloud}
+      dbDoc=ref;mode="your account";save();render();note()})})
+}).catch(function(){});
+</script>
+</body>
+</html>
