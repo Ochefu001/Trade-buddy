@@ -3,150 +3,246 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Setup Tracker</title>
+<meta name="theme-color" content="#060c09">
+<title>Trade Buddy | Plan, track and improve every trade</title>
+<meta name="description" content="Trade Buddy helps traders track setups, size positions, journal trades and measure their edge with expectancy.">
 <style>
-:root{--bg:#f3f5f4;--card:#fff;--ink:#14211c;--mute:#66746e;--line:#dbe2df;--acc:#0f766e;--w:#b45309;--p:#1d4ed8;--e:#0f766e;--x:#6b7280;--bad:#dc2626;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1513;--card:#16201d;--ink:#e8efec;--mute:#93a39c;--line:#26332f;--acc:#2dd4bf;--w:#fbbf24;--p:#60a5fa;--e:#2dd4bf;--x:#9ca3af;--bad:#f87171}}
-:root[data-theme="dark"]{--bg:#0e1513;--card:#16201d;--ink:#e8efec;--mute:#93a39c;--line:#26332f;--acc:#2dd4bf;--w:#fbbf24;--p:#60a5fa;--e:#2dd4bf;--x:#9ca3af;--bad:#f87171}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--brand:#22c55e;--brand2:#86efac;--bg:#060c09;--s1:#0c1511;--s2:#111e18;--line:rgba(255,255,255,.09);--ink:#f2f7f4;--mute:#93a79b;
+--head:"Segoe UI","Helvetica Neue",system-ui,sans-serif;box-sizing:border-box}
 *{box-sizing:border-box}
-body{margin:0 auto;background:var(--bg);color:var(--ink);font:16px/1.4 "Trebuchet MS",system-ui,sans-serif;max-width:600px;padding:14px}
-h1{font-size:22px;margin:4px 0 10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;margin-bottom:10px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}
-textarea{min-height:54px;resize:vertical}
-button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px}
-button.main{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
-:root:not([data-theme="light"]) button.main{color:#06201c}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
-.stats b{display:block;font-size:20px}.stats span{font-size:12px;color:var(--mute)}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px}
-.tabs button{white-space:nowrap;padding:8px 12px}
-.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--x);border-radius:10px;padding:11px;margin-bottom:9px}
-.item.Waiting{border-left-color:var(--w)}.item.AtPOI{border-left-color:var(--p)}.item.Entered{border-left-color:var(--e)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.pair{font-size:18px;font-weight:700}.tf{color:var(--mute);font-size:13px;margin-left:6px;font-weight:400}
-.Bullish,.Win{color:var(--e);font-weight:700}.Bearish,.Loss{color:var(--bad);font-weight:700}.BE{color:var(--mute);font-weight:700}
-.meta{color:var(--mute);font-size:14px;margin-top:4px;white-space:pre-wrap}
-.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.acts button{padding:6px 10px;font-size:14px}
-.empty{color:var(--mute);text-align:center;padding:24px 8px}
-.note{color:var(--mute);font-size:13px}
-details summary{cursor:pointer;font-weight:700}
+html{scroll-behavior:smooth;scroll-padding-top:80px;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--head);overflow-x:hidden;padding-top:env(safe-area-inset-top,0px)}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.glow{position:absolute;inset:0 0 auto 0;height:640px;pointer-events:none;overflow:hidden;z-index:0}
+.glow::before{content:"";position:absolute;left:50%;top:-260px;width:900px;height:620px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(34,197,94,.34),transparent)}
+.glow::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at top,#000 10%,transparent 70%);mask-image:radial-gradient(ellipse at top,#000 10%,transparent 70%);opacity:.5}
+.page{position:relative}
+.page>main,.page>footer{position:relative;z-index:1}
+.page>.glow{position:absolute;z-index:0}
+
+/* nav */
+header{position:sticky;top:12px;z-index:100;padding:0 14px}
+.bar{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;padding:0 10px 0 18px;border:1px solid var(--line);border-radius:999px;background:rgba(12,21,17,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px}
+.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#15803d);display:grid;place-items:center}
+.mark svg{width:16px;height:16px}
+nav{display:flex;align-items:center;gap:4px}
+nav a.l{color:var(--mute);font-size:14.5px;font-weight:600;padding:8px 13px;border-radius:999px;transition:.15s}
+nav a.l:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--brand);color:#03150a;font-weight:700;border-radius:999px;padding:13px 24px;font-size:15.5px;border:1px solid var(--brand);transition:.2s;box-shadow:0 8px 28px rgba(34,197,94,.28)}
+.btn:hover{background:var(--brand2);border-color:var(--brand2);transform:translateY(-1px)}
+.btn.o{background:rgba(255,255,255,.04);color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.o:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+.btn.sm{padding:9px 18px;font-size:14.5px}
+#menu{display:none;background:none;border:1px solid var(--line);border-radius:50%;width:40px;height:40px;color:var(--ink);font-size:18px;cursor:pointer}
+@media (max-width:820px){
+  #menu{display:block}
+  nav{display:none;position:absolute;left:14px;right:14px;top:70px;flex-direction:column;align-items:stretch;padding:12px;border:1px solid var(--line);border-radius:22px;background:#0c1511;box-shadow:0 20px 50px rgba(0,0,0,.6);z-index:101}
+  nav.open{display:flex}
+  nav a.l{padding:13px 14px;font-size:16px}
+  nav .btn{margin-top:8px}
+}
+
+/* hero */
+.hero{padding:70px 0 30px;text-align:center}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;padding:7px 14px;font-size:13.5px;color:var(--brand2);font-weight:600}
+.pill b{width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 10px var(--brand)}
+.hero h1{font-size:clamp(38px,8.2vw,76px);font-weight:800;letter-spacing:-2px;line-height:1.04;margin:22px auto 0;max-width:13em}
+.grad{background:linear-gradient(95deg,#fff 10%,var(--brand2) 45%,var(--brand));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.hero p.lead{font-size:clamp(16px,2.4vw,19px);color:var(--mute);max-width:36em;margin:20px auto 30px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* app mock */
+.stage{margin:54px auto 0;max-width:880px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01));padding:12px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 120px rgba(34,197,94,.12)}
+.app{background:var(--s1);border-radius:18px;border:1px solid var(--line);display:grid;grid-template-columns:1.15fr 1fr;text-align:left;overflow:hidden}
+.col{padding:18px}
+.col+.col{border-left:1px solid var(--line);background:var(--s2)}
+.lab{font-size:12.5px;color:var(--mute);font-weight:600;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);margin-bottom:8px}
+.row b{font-size:15.5px;display:block;line-height:1.2}.row small{color:var(--mute);font-size:12.5px}
+.tag{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+.t1{background:rgba(34,197,94,.15);color:#4ade80}.t2{background:rgba(245,158,11,.15);color:#fbbf24}.t3{background:rgba(96,165,250,.15);color:#93c5fd}
+.big{font-size:38px;font-weight:800;letter-spacing:-1px;color:var(--brand2);line-height:1.1}
+.mini{color:var(--mute);font-size:13px}
+.chart{width:100%;height:92px;margin:10px 0 4px;display:block}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.kv div{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:11px;padding:9px;text-align:center}
+.kv b{display:block;font-size:16px}.kv span{font-size:11.5px;color:var(--mute)}
+@media (max-width:720px){.app{grid-template-columns:1fr}.col+.col{border-left:0;border-top:1px solid var(--line)}.stage{margin-top:40px}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:46px 0 0}
+.stats div{padding:6px 0;text-align:center}
+.stats b{display:block;font-size:30px;font-weight:800;letter-spacing:-.5px}
+.stats span{color:var(--mute);font-size:14px}
+@media (max-width:640px){.stats{grid-template-columns:1fr 1fr}}
+
+/* sections */
+section{padding:84px 0 0}
+.sh{max-width:36em;margin:0 auto 38px;text-align:center}
+.sh small{color:var(--brand);font-weight:700;font-size:14px}
+.sh h2{font-size:clamp(30px,5.4vw,50px);font-weight:800;letter-spacing:-1.4px;line-height:1.08;margin-top:10px}
+.sh p{color:var(--mute);margin-top:14px}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.bx{border:1px solid var(--line);border-radius:24px;padding:24px;background:linear-gradient(180deg,var(--s2),var(--s1));overflow:hidden;position:relative}
+.bx h3{font-size:21px;font-weight:700;letter-spacing:-.4px;margin-bottom:8px}
+.bx p{color:var(--mute);font-size:15.5px}
+.bx .ico{width:42px;height:42px;border-radius:13px;background:rgba(34,197,94,.14);display:grid;place-items:center;margin-bottom:16px;color:var(--brand)}
+.bx .ico svg{width:22px;height:22px}
+.s4{grid-column:span 4}.s3{grid-column:span 3}.s2{grid-column:span 2}
+@media (max-width:860px){.s4,.s3,.s2{grid-column:span 6}}
+.chk{margin-top:16px;display:grid;gap:8px}
+.chk div{display:flex;gap:10px;align-items:center;font-size:14.5px;padding:9px 12px;border-radius:12px;background:rgba(255,255,255,.035)}
+.chk i{width:20px;height:20px;border-radius:6px;background:var(--brand);display:grid;place-items:center;flex:none}
+.chk i svg{width:12px;height:12px}
+.chk i.off{background:transparent;border:1.5px solid var(--mute)}
+.formula{margin-top:16px;padding:16px;border-radius:16px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);font-weight:700;font-size:15.5px;color:var(--brand2);line-height:1.5}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+.st{padding:26px;border:1px solid var(--line);border-radius:24px;background:var(--s1)}
+.st .n{width:38px;height:38px;border-radius:50%;background:var(--brand);color:#03150a;font-weight:800;display:grid;place-items:center;margin-bottom:16px}
+.st h3{font-size:20px;margin-bottom:6px}.st p{color:var(--mute);font-size:15.5px}
+
+/* faq */
+.faq{max-width:760px;margin:0 auto}
+details{border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:10px;background:var(--s1)}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--brand);font-size:22px;line-height:1}
+details[open] summary::after{content:"\2212"}
+details p{color:var(--mute);margin-top:10px}
+
+.final{margin:84px 0 0;text-align:center;border-radius:32px;padding:64px 22px;border:1px solid rgba(34,197,94,.3);background:radial-gradient(ellipse at top,rgba(34,197,94,.28),transparent 70%),var(--s1)}
+.final h2{font-size:clamp(30px,5.4vw,48px);font-weight:800;letter-spacing:-1.3px;line-height:1.08;max-width:14em;margin:0 auto}
+.final p{color:var(--mute);margin:14px 0 26px}
+
+footer{margin-top:70px;border-top:1px solid var(--line);padding:36px 0 calc(40px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:14.5px}
+.foot{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between}
+.fl{display:flex;flex-wrap:wrap;gap:8px 22px}
+.fl a:hover{color:var(--ink)}
+.risk{margin-top:24px;font-size:12.5px;line-height:1.6;max-width:64em;opacity:.85}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--brand2);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
 </head>
 <body>
-<h1>Setup Tracker</h1>
+<div class="page">
+<div class="glow"></div>
 
-<div class="card stats" id="stats"></div>
+<header>
+  <div class="bar">
+    <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
+    <button id="menu" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <nav id="nav">
+      <a class="l" href="index.html">Home</a>
+      <a class="l" href="services.html">Services</a>
+      <a class="l" href="about.html">About</a>
+      <a class="l" href="faq.html">FAQ</a>
+      <a class="l" href="contact.html">Contact</a>
+      <a class="l" href="login.html">Log in</a>
+      <a class="btn sm" href="signup.html">Sign up</a>
+    </nav>
+  </div>
+</header>
 
-<div class="card">
-  <div class="row3">
-    <input id="pair" placeholder="Pair e.g. XAUUSD" autocapitalize="characters">
-    <select id="bias"><option>Bullish</option><option>Bearish</option></select>
-    <select id="tf"><option>M15</option><option>H1</option><option selected>H4</option><option>D1</option></select>
+<main class="wrap">
+  <div class="hero">
+    <span class="pill"><b></b>Built for disciplined traders</span>
+    <h1>Trade with a plan. <span class="grad">Know your edge.</span></h1>
+    <p class="lead">Track every setup, size every risk, journal every result, and see exactly what your strategy is worth with expectancy.</p>
+    <div class="cta">
+      <a class="btn" href="signup.html">Get started free</a>
+      <a class="btn o" href="tracker.html">Try the tracker</a>
+    </div>
+
+    <div class="stage" aria-label="Trade Buddy preview">
+      <div class="app">
+        <div class="col">
+          <div class="lab">Active setups</div>
+          <div class="row"><div><b>XAUUSD</b><small>Bullish &middot; H1 order block</small></div><span class="tag t1">Entered</span></div>
+          <div class="row"><div><b>GBPJPY</b><small>Bullish &middot; M15 FVG &middot; 3 of 4 checks</small></div><span class="tag t3">At POI</span></div>
+          <div class="row" style="margin-bottom:0"><div><b>EURUSD</b><small>Bearish &middot; H4 supply</small></div><span class="tag t2">Waiting</span></div>
+        </div>
+        <div class="col">
+          <div class="lab">Expectancy</div>
+          <div class="big">+0.71R</div>
+          <div class="mini">average return per trade</div>
+          <svg class="chart" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22c55e" stop-opacity=".4"/><stop offset="1" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs><path d="M0 80 L30 70 L55 74 L85 52 L115 58 L145 36 L175 42 L205 24 L240 30 L300 8 L300 92 L0 92Z" fill="url(#g)"/><path d="M0 80 L30 70 L55 74 L85 52 L115 58 L145 36 L175 42 L205 24 L240 30 L300 8" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          <div class="kv"><div><b>55%</b><span>Win rate</span></div><div><b>2.1R</b><span>Avg win</span></div><div><b>1.0R</b><span>Avg loss</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div><b>6</b><span>Trading tools</span></div>
+      <div><b>1 min</b><span>To set up</span></div>
+      <div><b>100%</b><span>Phone friendly</span></div>
+      <div><b>Free</b><span>To start</span></div>
+    </div>
   </div>
-  <input id="poi" placeholder="POI (e.g. 1H OB at 1.0850)">
-  <div class="row3">
-    <input id="entry" inputmode="decimal" placeholder="Entry">
-    <input id="sl" inputmode="decimal" placeholder="Stop loss">
-    <input id="tp" inputmode="decimal" placeholder="Take profit">
+
+  <section id="services">
+    <div class="sh"><small>Services</small><h2>Everything between analysis and review</h2><p>One toolkit that follows a trade from first bias to final lesson.</p></div>
+    <div class="bento">
+      <div class="bx s4"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>Analytics and expectancy</h3><p>See your win rate, average win and average loss, then find out what each trade is worth on average. Break results down by pair, session and day.</p><div class="formula">Expectancy = (win rate &times; avg win) &minus; (loss rate &times; avg loss)</div></div>
+      <div class="bx s2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></div><h3>Pre-trade checklist</h3><p>Your rules, ticked before entry.</p><div class="chk"><div><i><svg viewBox="0 0 12 12" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round"><path d="M2 6l3 3 5-6"/></svg></i>Bias set</div><div><i><svg viewBox="0 0 12 12" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round"><path d="M2 6l3 3 5-6"/></svg></i>POI reached</div><div><i class="off"></i>Confirmation</div></div></div>
+      <div class="bx s2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/></svg></div><h3>Position calculator</h3><p>Balance, risk and stop loss in. Lot size and risk-to-reward out.</p></div>
+      <div class="bx s2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/></svg></div><h3>Trade journal</h3><p>Result, emotion and lesson for every trade, with a chart link.</p></div>
+      <div class="bx s2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Session clock</h3><p>London and New York opens in your own time zone.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="sh"><small>How it works</small><h2>Plan. Execute. Review.</h2></div>
+    <div class="steps">
+      <div class="st"><div class="n">1</div><h3>Plan</h3><p>Add your bias, POI and confirmation rules before price gets there.</p></div>
+      <div class="st"><div class="n">2</div><h3>Execute</h3><p>Run the checklist, size the trade, enter, and update the status.</p></div>
+      <div class="st"><div class="n">3</div><h3>Review</h3><p>Journal the result and let expectancy show if your strategy works.</p></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="sh"><small>About</small><h2>Made by a trader who kept forgetting</h2><p>Trade Buddy started with one problem: after setting a bias and waiting for a POI, it was easy to lose track of which pairs were analysed and which were entered. A simple tracker fixed that, and it grew into a full toolkit for disciplined traders.</p><p><a href="about.html" style="color:var(--brand2);font-weight:700">Read our story</a></p></div>
+  </section>
+
+  <section id="faq">
+    <div class="sh"><small>FAQ</small><h2>Quick answers</h2></div>
+    <div class="faq">
+      <details><summary>Is Trade Buddy free?</summary><p>You can start free. If paid features arrive later, we will say so clearly first.</p></details>
+      <details><summary>Does it place trades for me?</summary><p>No. Trade Buddy is a planning and review tool. You trade on your own broker or platform.</p></details>
+      <details><summary>Where is my data kept?</summary><p>Your setups are saved to your account and on your device, and you can back them up at any time.</p></details>
+      <details><summary>Does it work on my phone?</summary><p>Yes. It is designed phone-first and runs in any modern browser.</p></details>
+    </div>
+  </section>
+
+  <div class="final"><h2>Ready to trade with more discipline?</h2><p>Set up your first tracker in under a minute.</p><a class="btn" href="signup.html">Sign up free</a></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><b style="color:var(--ink);font-size:17px">Trade Buddy</b><br>Plan. Track. Improve.</div>
+      <div class="fl"><a href="services.html">Services</a><a href="about.html">About</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div>
+    </div>
+    <p class="risk">Risk warning: Trading leveraged products such as forex, CFDs and crypto carries a high level of risk and may not suit everyone. Trade Buddy provides tools for organisation and analysis only and does not give financial advice. Past results do not guarantee future performance.</p>
+    <p style="margin-top:14px">&copy; <span id="yr">2026</span> Trade Buddy</p>
   </div>
-  <textarea id="conf" placeholder="Confirmation needed / notes"></textarea>
-  <div class="row"><button class="main" id="addBtn">Add setup</button><button id="cancelEdit" style="display:none">Cancel edit</button></div>
+</footer>
 </div>
 
-<input id="search" placeholder="Search pair or notes" style="margin-bottom:6px">
-<div class="tabs" id="tabs"></div>
-<div id="list"></div>
-
-<details class="card">
-  <summary>Backup and storage</summary>
-  <div class="note" id="storeNote">Checking storage...</div>
-  <div class="row"><button id="exportBtn">Save backup file</button><button id="copyBtn">Copy backup</button></div>
-  <textarea id="importBox" placeholder="Paste a backup here to restore"></textarea>
-  <button id="importBtn">Restore from pasted backup</button>
-  <div class="note" id="msg"></div>
-</details>
-
 <script>
-var STATUS=["Waiting","At POI","Entered","Done"],key="setups-v2",items=[],filter="Active",editId=null,dbDoc=null,mode="this browser only";
-function $(i){return document.getElementById(i)}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function cls(s){return s.replace(" ","")}
-function say(t){$("msg").textContent=t}
-function save(){
-  try{localStorage.setItem(key,JSON.stringify(items))}catch(e){}
-  if(dbDoc){dbDoc.set({items:items}).catch(function(){say("Cloud save failed. Your phone copy is still safe.")})}
-}
-function loadLocal(){try{items=JSON.parse(localStorage.getItem(key)||localStorage.getItem("setups-v1"))||[]}catch(e){items=[]}}
-function rr(i){var e=+i.entry,s=+i.sl,t=+i.tp;if(!e||!s||!t||e==s)return "";return (Math.abs(t-e)/Math.abs(e-s)).toFixed(1)}
-function stats(){
-  var a=items.filter(function(i){return i.s!="Done"}).length,en=items.filter(function(i){return i.s=="Entered"}).length;
-  var w=items.filter(function(i){return i.r=="Win"}).length,l=items.filter(function(i){return i.r=="Loss"}).length;
-  var wr=(w+l)?Math.round(100*w/(w+l))+"%":"-";
-  $("stats").innerHTML='<div><b>'+a+'</b><span>Active</span></div><div><b>'+en+'</b><span>Live</span></div><div><b>'+(w+"/"+l)+'</b><span>Win/Loss</span></div><div><b>'+wr+'</b><span>Win rate</span></div>'}
-function render(){
-  stats();
-  var tabs=["Active"].concat(STATUS).concat(["All"]),q=$("search").value.trim().toLowerCase();
-  function ok(i,t){return (t=="All"||(t=="Active"?i.s!="Done":i.s==t))}
-  $("tabs").innerHTML=tabs.map(function(t){return '<button class="'+(t==filter?"on":"")+'" data-t="'+t+'">'+t+' ('+items.filter(function(i){return ok(i,t)}).length+')</button>'}).join("");
-  var shown=items.filter(function(i){return ok(i,filter)&&(!q||(i.p+" "+(i.c||"")+" "+(i.poi||"")).toLowerCase().indexOf(q)>-1)});
-  if(!shown.length){$("list").innerHTML='<div class="empty">Nothing here yet.</div>';return}
-  $("list").innerHTML=shown.map(function(i){
-    var next=STATUS[Math.min(STATUS.indexOf(i.s)+1,3)],r=rr(i);
-    var lv=[i.entry&&"Entry "+i.entry,i.sl&&"SL "+i.sl,i.tp&&"TP "+i.tp,r&&"RR 1:"+r].filter(Boolean).join("  ");
-    return '<div class="item '+cls(i.s)+'"><div class="top"><span class="pair">'+esc(i.p)+'<span class="tf">'+esc(i.tf||"")+'</span></span><span class="'+i.b+'">'+i.b+'</span></div>'+
-    '<div class="meta">POI: '+esc(i.poi||"-")+'\nStatus: '+i.s+(i.r?' · <span class="'+i.r+'">'+i.r+'</span>':'')+' · '+i.d+(lv?'\n'+esc(lv):'')+(i.c?'\n'+esc(i.c):'')+'</div>'+
-    '<div class="acts">'+(i.s!="Done"?'<button data-a="next" data-id="'+i.id+'">Mark '+next+'</button>':'')+
-    (i.s=="Entered"||i.s=="Done"?'<button data-a="Win" data-id="'+i.id+'">Win</button><button data-a="Loss" data-id="'+i.id+'">Loss</button><button data-a="BE" data-id="'+i.id+'">BE</button>':'')+
-    '<button data-a="edit" data-id="'+i.id+'">Edit</button><button data-a="inv" data-id="'+i.id+'">Invalidated</button><button data-a="del" data-id="'+i.id+'">Delete</button></div></div>'}).join("")}
-var F=["pair","poi","entry","sl","tp","conf"];
-function clearForm(){F.forEach(function(x){$(x).value=""});editId=null;$("addBtn").textContent="Add setup";$("cancelEdit").style.display="none"}
-$("addBtn").onclick=function(){
-  var p=$("pair").value.trim().toUpperCase();if(!p){$("pair").focus();return}
-  var v={p:p,b:$("bias").value,tf:$("tf").value,poi:$("poi").value.trim(),entry:$("entry").value.trim(),sl:$("sl").value.trim(),tp:$("tp").value.trim(),c:$("conf").value.trim()};
-  if(editId){var it=items.filter(function(i){return i.id==editId})[0];for(var k in v)it[k]=v[k]}
-  else{v.id=Date.now();v.s="Waiting";v.d=new Date().toLocaleDateString();items.unshift(v)}
-  clearForm();save();render()};
-$("cancelEdit").onclick=clearForm;
-$("search").oninput=render;
-$("tabs").onclick=function(e){var t=e.target.getAttribute("data-t");if(t){filter=t;render()}};
-$("list").onclick=function(e){
-  var a=e.target.getAttribute("data-a"),id=+e.target.getAttribute("data-id");if(!a)return;
-  var it=items.filter(function(i){return i.id==id})[0];
-  if(a=="next")it.s=STATUS[Math.min(STATUS.indexOf(it.s)+1,3)];
-  else if(a=="inv"){it.s="Done";it.r="";it.c=(it.c?it.c+"\n":"")+"Invalidated"}
-  else if(a=="Win"||a=="Loss"||a=="BE"){it.r=it.r==a?"":a;it.s="Done"}
-  else if(a=="edit"){$("pair").value=it.p;$("bias").value=it.b;$("tf").value=it.tf||"H4";$("poi").value=it.poi||"";$("entry").value=it.entry||"";$("sl").value=it.sl||"";$("tp").value=it.tp||"";$("conf").value=it.c||"";editId=id;$("addBtn").textContent="Save changes";$("cancelEdit").style.display="";window.scrollTo(0,0);return}
-  else if(a=="del"){if(!confirm("Delete "+it.p+"?"))return;items=items.filter(function(i){return i.id!=id})}
-  save();render()};
-function backup(){return JSON.stringify({app:"setup-tracker",items:items})}
-$("copyBtn").onclick=function(){try{navigator.clipboard.writeText(backup()).then(function(){say("Backup copied. Paste it into a note or WhatsApp to yourself.")},function(){say("Copy blocked. Use Save backup file.")})}catch(e){say("Copy blocked. Use Save backup file.")}};
-$("exportBtn").onclick=function(){
-  claude.use("downloads").then(function(d){if(!d){say("File saving is unavailable here. Use Copy backup.");return}
-    return d.save({filename:"setups-backup.json",data:backup()}).then(function(){say("Backup saved.")},function(){say("Save cancelled.")})})};
-$("importBtn").onclick=function(){
-  try{var o=JSON.parse($("importBox").value);if(!o||!Array.isArray(o.items))throw 0;
-    if(!confirm("Replace current setups with this backup?"))return;items=o.items;save();render();$("importBox").value="";say("Restored "+items.length+" setups.")}
-  catch(e){say("That backup is not valid.")}};
-function note(){$("storeNote").textContent="Saved in: "+mode+". "+(dbDoc?"Also kept on your claude.ai account, private to you.":"Clearing this browser's site data erases it, so back up now and then.")}
-loadLocal();render();note();
-var done=false;
-Promise.all([claude.use("db"),claude.use("user")]).then(function(r){
-  var db=r[0],u=r[1];if(!db||!u)return;
-  return u.id().then(function(id){
-    var ref=db.collection("data/users/"+id).doc("tracker"),t=setTimeout(function(){},10000);
-    return ref.get().then(function(s){clearTimeout(t);
-      if(s.exists&&s.data()&&Array.isArray(s.data().items)){
-        var cloud=s.data().items,have={};cloud.forEach(function(i){have[i.id]=1});
-        items.forEach(function(i){if(!have[i.id])cloud.push(i)});items=cloud}
-      dbDoc=ref;mode="your account";save();render();note()})})
-}).catch(function(){});
+(function(){
+  var b=document.getElementById("menu"),n=document.getElementById("nav");
+  b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});
+  n.addEventListener("click",function(e){if(e.target.tagName=="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false")}});
+  document.getElementById("yr").textContent=new Date().getFullYear();
+})();
 </script>
 </body>
 </html>
