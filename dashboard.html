@@ -132,6 +132,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .srch input::placeholder{text-transform:none}
 .srch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2;stroke-linecap:round}
 .srch .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mute);font-size:24px;line-height:1;cursor:pointer;display:none;padding:6px 10px}
+.bk{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015))}
+.bk-h{display:flex;align-items:center;gap:14px}
+.mono{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;flex:none;font-family:var(--serif);font-size:26px;font-weight:600;color:#06100b}
+.bk-h b{display:block;font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.15}
+.bk-h small{color:var(--mute);font-size:12px;letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+.bk>p{color:#d5e1da;font-size:14.5px;margin:14px 0 2px}
+.bk .chips{margin:10px 0 16px}
+.go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--brand);color:#03150a;font-weight:700;border-radius:999px;padding:13px;box-shadow:0 8px 24px rgba(34,197,94,.25)}
+.go:hover{background:var(--b2)}
+.go.off{background:rgba(255,255,255,.05);color:var(--mute);box-shadow:none;border:1px dashed var(--line);font-weight:600}
 .empty{text-align:center;color:var(--mute);padding:20px 8px}
 .err{color:#fecaca;font-size:14px;margin-top:6px}
 .res{border-radius:14px;padding:14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);margin-top:4px}
@@ -304,7 +314,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
       <div class="res"><b id="ex">-</b><span id="exd">(win rate &times; avg win) &minus; (loss rate &times; avg loss)</span></div></div></div>
   </div>
 
-  <div class="view" id="v-brokers"><div class="card"><h2>Top brokers</h2><div id="bl"></div><p class="note">A starting list, not an endorsement. Check that a broker is regulated and available in your country, and read the fees and withdrawal terms before you deposit.</p></div></div>
+  <div class="view" id="v-brokers"><p class="note" style="margin:-4px 0 14px">Some links below are affiliate links. We may earn a commission if you open an account, at no extra cost to you.</p><div id="bl"></div><p class="note">Not financial advice or an endorsement. Check that a broker is regulated and available in your country, and read the fees and withdrawal terms before you deposit. Trading carries risk.</p></div>
   <div class="view" id="v-prop"><div class="card"><h2>Prop firms</h2><div id="pl"></div><p class="note">A starting list, not an endorsement. Rules, prices and reputations change, so read the terms and recent reviews before paying for any challenge.</p></div></div>
   <div class="view" id="v-alerts"><div class="card"><h2>Notifications</h2><div id="al2"></div></div></div>
   <div class="view" id="v-profile"><div class="card"><h2>Profile</h2>
@@ -327,7 +337,15 @@ import { onAuthStateChanged, signOut, updateProfile, sendPasswordResetEmail } fr
 import { collection, addDoc, onSnapshot, query, orderBy, updateDoc, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 var $ = function (i) { return document.getElementById(i); };
 var STATUS = ["Waiting","At POI","Entered","Done"];
-var BROKERS = [{n:"Exness",u:"https://www.exness.com",d:"Forex, metals and crypto CFDs."},{n:"IC Markets",u:"https://www.icmarkets.com",d:"Forex and CFD broker."},{n:"Pepperstone",u:"https://pepperstone.com",d:"Forex and CFD broker."},{n:"XM",u:"https://www.xm.com",d:"Forex and CFD broker."}];
+var BROKERS = [
+  {n:"Exness",c:"#fbbf24",t:"Forex, metals, crypto and stock CFDs.",p:["MT4","MT5"],aff:"https://one.exnessonelink.com/a/evak0j94gn?source=app"},
+  {n:"Headway",c:"#38bdf8",t:"Forex, metals and crypto CFDs on MetaTrader.",p:["MT4","MT5"],aff:"https://headway.partners/user/signup?hwp=27ac56"},
+  {n:"Pepperstone",c:"#f87171",t:"Forex and CFD broker with several platform choices.",p:["MT4","MT5","cTrader"],aff:""},
+  {n:"Deriv",c:"#fb7185",t:"Known for synthetic indices, alongside forex and more.",p:["Deriv MT5","DTrader","Deriv Bot"],aff:""},
+  {n:"XM",c:"#a78bfa",t:"Forex, indices and CFD broker on MetaTrader.",p:["MT4","MT5"],aff:""},
+  {n:"IC Markets",c:"#34d399",t:"Forex and CFD broker known for raw-spread accounts.",p:["MT4","MT5","cTrader"],aff:""},
+  {n:"FXTM",c:"#60a5fa",t:"Forex and CFD broker on MetaTrader.",p:["MT4","MT5"],aff:""}
+];
 var PROPS = [{n:"FTMO",u:"https://ftmo.com",d:"Funded trader challenge programme."},{n:"The5ers",u:"https://the5ers.com",d:"Funded trader programmes."},{n:"FundedNext",u:"https://fundednext.com",d:"Funded trader challenges."},{n:"Funding Pips",u:"https://fundingpips.com",d:"Funded trader challenges."}];
 var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null, sp = 1, jpn = 1, jq = "", PER = 10;
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -375,7 +393,13 @@ $("jdt").value = today();
 
 /* lists */
 function links(id, arr) { $(id).innerHTML = arr.map(function (x) { return '<div class="li"><div><b>' + esc(x.n) + "</b><p>" + esc(x.d) + '</p></div><a href="' + esc(x.u) + '" target="_blank" rel="noopener noreferrer">Visit</a></div>'; }).join(""); }
-links("bl", BROKERS); links("pl", PROPS);
+function brokers() {
+  $("bl").innerHTML = BROKERS.map(function (b) {
+    var btn = b.aff ? '<a class="go" href="' + esc(b.aff) + '" target="_blank" rel="sponsored noopener noreferrer">Open account <span aria-hidden="true">&rarr;</span></a>' : '<span class="go off">Link coming soon</span>';
+    return '<div class="bk"><div class="bk-h"><span class="mono" style="background:' + b.c + '">' + esc(b.n.charAt(0)) + '</span><div><b>' + esc(b.n) + '</b><small>Online broker</small></div></div><p>' + esc(b.t) + '</p><div class="chips">' + b.p.map(function (x) { return '<span class="chip">' + esc(x) + '</span>'; }).join("") + '</div>' + btn + '</div>';
+  }).join("");
+}
+brokers(); links("pl", PROPS);
 
 /* setups */
 function render() {
