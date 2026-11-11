@@ -16,7 +16,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 // Page to open after a successful login or sign-up
-export const AFTER_LOGIN = "tracker.html";
+export const AFTER_LOGIN = "dashboard.html";
 
 export function friendlyError(code) {
   var m = {
