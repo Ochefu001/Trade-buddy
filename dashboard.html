@@ -143,6 +143,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--brand);color:#03150a;font-weight:700;border-radius:999px;padding:13px;box-shadow:0 8px 24px rgba(34,197,94,.25)}
 .go:hover{background:var(--b2)}
 .go.off{background:rgba(255,255,255,.05);color:var(--mute);box-shadow:none;border:1px dashed var(--line);font-weight:600}
+.nt{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:rgba(255,255,255,.03)}
+.nt.new{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.07)}
+.nt b{font-family:var(--serif);font-size:17px;font-weight:600;display:block}
+.nt p{color:#d5e1da;font-size:14.5px;margin-top:4px}
+.nt small{display:block;color:var(--mute);font-size:12px;margin-top:6px}
+.vbar{border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);border-radius:16px;padding:12px 14px;margin:2px 0 14px;font-size:14px}
+.vbar p{color:#f5e6b8}
+.vbar div{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.vbar button{background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--ink);font:inherit;font-size:13px;font-weight:600;border-radius:999px;padding:7px 14px;cursor:pointer}
+.vbar span{display:block;color:var(--mute);font-size:12.5px;margin-top:8px}
 .empty{text-align:center;color:var(--mute);padding:20px 8px}
 .err{color:#fecaca;font-size:14px;margin-top:6px}
 .res{border-radius:14px;padding:14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);margin-top:4px}
@@ -193,6 +203,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 </nav>
 <div class="wrap">
   <div class="top"><button class="menu-btn" id="mb" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="mdot" id="md" style="display:none"></span></button><a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a></div>
+  <div class="vbar" id="vb" style="display:none"><p>Please verify your email. We sent a link to <b id="vbe"></b>.</p><div><button id="vrs">Resend email</button><button id="vok">I have verified</button></div><span id="vm"></span></div>
   <div class="hello" id="hello"><h1 id="hi">Welcome</h1><p>Plan from the higher timeframe, execute on the lower.</p><div class="status"><span class="dot" id="dot"></span><span id="st">Connecting...</span></div></div>
 
   <h1 class="ph" id="pt" style="display:none"></h1>
@@ -334,7 +345,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 
 <script type="module">
 import { auth, db, friendlyError } from "./firebase.js";
-import { onAuthStateChanged, signOut, updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import { onAuthStateChanged, signOut, updateProfile, sendPasswordResetEmail, sendEmailVerification } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 import { collection, addDoc, onSnapshot, query, orderBy, updateDoc, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 var $ = function (i) { return document.getElementById(i); };
 var STATUS = ["Waiting","At POI","Entered","Done"];
@@ -342,7 +353,7 @@ var BROKERS = [
   {n:"Exness",c:"#fbbf24",t:"Forex, metals, crypto and stock CFDs.",p:["MT4","MT5"],aff:"https://one.exnessonelink.com/a/evak0j94gn?source=app"},
   {n:"Headway",c:"#38bdf8",t:"Forex, metals and crypto CFDs on MetaTrader.",p:["MT4","MT5"],aff:"https://headway.partners/user/signup?hwp=27ac56"},
   {n:"Pepperstone",c:"#f87171",t:"Forex and CFD broker with several platform choices.",p:["MT4","MT5","cTrader"],aff:""},
-  {n:"Deriv",c:"#fb7185",t:"Known for synthetic indices, alongside forex and more.",p:["Deriv MT5","DTrader","Deriv Bot"],aff:"https://t.deriv.link?t=TNHBMGPBEV28"},
+  {n:"Deriv",c:"#fb7185",t:"Known for synthetic indices, alongside forex and more.",p:["Deriv MT5","DTrader","Deriv Bot"],aff:""},
   {n:"XM",c:"#a78bfa",t:"Forex, indices and CFD broker on MetaTrader.",p:["MT4","MT5"],aff:""},
   {n:"IC Markets",c:"#34d399",t:"Forex and CFD broker known for raw-spread accounts.",p:["MT4","MT5","cTrader"],aff:""},
   {n:"FXTM",c:"#60a5fa",t:"Forex and CFD broker on MetaTrader.",p:["MT4","MT5"],aff:""}
@@ -357,7 +368,7 @@ var PROPS = [
   {n:"FXIFY",c:"#34d399",t:"Funded trader challenges across several trading platforms.",aff:""},
   {n:"Hantec Trader",c:"#f472b6",t:"Funded trader programme from the Hantec brand.",aff:""}
 ];
-var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null, sp = 1, jpn = 1, jq = "", PER = 10;
+var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null, nitems = [], ncol = null, sp = 1, jpn = 1, jq = "", PER = 10;
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function setStatus(t, c) { $("st").textContent = t; $("dot").className = "dot " + c; }
 function today() { var d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
@@ -376,6 +387,11 @@ function pager(id, total, page) {
 }
 function pcount(id, total, page) { $(id).textContent = total ? "Showing " + ((page - 1) * PER + 1) + "-" + Math.min(page * PER, total) + " of " + total : ""; }
 
+function markRead() {
+  if (!ncol) return;
+  nitems.filter(function (x) { return !x.read; }).forEach(function (x) { updateDoc(doc(ncol, x.id), { read: true }).catch(function () {}); });
+}
+
 /* tabs */
 var TITLES = {setups:"New setup",setuplist:"My setups",journal:"Log a trade",history:"Trade history",calc:"Calculator",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile"};
 function menu(o) { document.body.classList.toggle("mo", o); $("mb").setAttribute("aria-expanded", o); $("mb").setAttribute("aria-label", o ? "Close menu" : "Open menu"); }
@@ -385,6 +401,7 @@ function show(v) {
   $("hello").style.display = v === "setups" ? "" : "none";
   $("pt").style.display = v === "setups" ? "none" : ""; $("pt").textContent = TITLES[v];
   document.title = TITLES[v] + " | Trade Buddy"; menu(false); window.scrollTo(0, 0);
+  if (v === "alerts") markRead();
 }
 function go(v) { if (location.hash === "#" + v) show(v); else location.hash = v; }
 document.querySelectorAll("#drawer > *").forEach(function (e, i) { e.style.setProperty("--i", i); });
@@ -441,8 +458,11 @@ function alerts() {
     else if (i.s === "Entered") a.push(i.p + " is live. Manage the trade.");
     else if (i.s === "Waiting" && i.createdAt && i.createdAt.toMillis && now - i.createdAt.toMillis() > 864e5) a.push(i.p + " has been waiting for " + Math.floor((now - i.createdAt.toMillis()) / 864e5) + " day(s). Still valid?");
   });
-  $("al2").innerHTML = a.length ? a.map(function (t) { return '<div class="li"><p style="color:var(--ink)">' + esc(t) + "</p></div>"; }).join("") : '<div class="empty">You are all caught up.</div>';
-  $("bd").style.display = a.length ? "" : "none"; $("bd").textContent = a.length; $("md").style.display = a.length ? "" : "none";
+  var un = nitems.filter(function (x) { return !x.read; }).length, tot = un + a.length;
+  var h = nitems.map(function (x) { var d = x.createdAt && x.createdAt.toDate ? x.createdAt.toDate().toLocaleDateString() : ""; return '<div class="nt' + (x.read ? "" : " new") + '"><b>' + esc(x.t) + "</b><p>" + esc(x.m) + "</p><small>" + esc(d) + "</small></div>"; }).join("");
+  h += a.map(function (t) { return '<div class="li"><p style="color:var(--ink)">' + esc(t) + "</p></div>"; }).join("");
+  $("al2").innerHTML = h || '<div class="empty">You are all caught up.</div>';
+  $("bd").style.display = tot ? "" : "none"; $("bd").textContent = tot; $("md").style.display = tot ? "" : "none";
 }
 $("tabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { filter = t; sp = 1; render(); } };
 $("pg").onclick = function (e) { var b = e.target.closest("button"); if (b && !b.disabled) { sp = +b.getAttribute("data-p"); render(); window.scrollTo({ top: 0, behavior: "smooth" }); } };
@@ -677,6 +697,16 @@ $("fxsw").onclick = function () {
   calcFx();
 };
 
+/* email verification */
+$("vrs").onclick = async function () {
+  try { await sendEmailVerification(user); $("vm").textContent = "Verification email sent. Check your inbox and spam folder."; }
+  catch (e) { $("vm").textContent = e.code === "auth/too-many-requests" ? "Too many requests. Try again in a while." : friendlyError(e.code); }
+};
+$("vok").onclick = async function () {
+  try { await user.reload(); if (user.emailVerified) $("vb").style.display = "none"; else $("vm").textContent = "Not verified yet. Open the link in your email first."; }
+  catch (e) { $("vm").textContent = friendlyError(e.code); }
+};
+
 /* profile */
 $("out").onclick = function () { signOut(auth).then(function () { location.replace("login.html"); }); };
 $("pnb").onclick = async function () {
@@ -690,6 +720,12 @@ onAuthStateChanged(auth, function (u) {
   user = u; $("hi").textContent = "Welcome, " + (u.displayName ? u.displayName.split(" ")[0] : "trader");
   $("dn").textContent = u.displayName || "Trader"; $("de").textContent = u.email || ""; $("dav").textContent = (u.displayName || u.email || "T").charAt(0).toUpperCase();
   $("pn").value = u.displayName || ""; $("pe").textContent = u.email; $("pm").textContent = u.metadata.creationTime ? new Date(u.metadata.creationTime).toLocaleDateString() : "-";
+  if (!u.emailVerified) { $("vb").style.display = ""; $("vbe").textContent = u.email; }
+  ncol = collection(db, "users", u.uid, "notifications");
+  onSnapshot(query(ncol, orderBy("createdAt", "desc")), function (snap) {
+    nitems = snap.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; });
+    alerts(); if ($("v-alerts").classList.contains("on")) markRead();
+  }, function () {});
   col = collection(db, "users", u.uid, "setups");
   jcol = collection(db, "users", u.uid, "journal");
   onSnapshot(query(col, orderBy("createdAt", "desc")), function (snap) {
