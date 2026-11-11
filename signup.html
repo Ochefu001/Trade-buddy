@@ -80,8 +80,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--brand2);outline-off
 
 <script type="module">
 import { auth, db, AFTER_LOGIN, friendlyError } from "./firebase.js";
-import { createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import { doc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
 var $ = function (i) { return document.getElementById(i); };
 var busy = false;
@@ -112,8 +112,13 @@ $("f").addEventListener("submit", async function (e) {
     try {
       await setDoc(doc(db, "users", cred.user.uid), { name: name, email: email, createdAt: serverTimestamp() });
     } catch (x) { console.warn(x); }
-    show("Account created. Taking you in...", "ok");
-    setTimeout(function () { location.replace(AFTER_LOGIN); }, 700);
+    try {
+      await addDoc(collection(db, "users", cred.user.uid, "notifications"), { t: "Welcome to Trade Buddy, " + name.split(" ")[0], m: "Your account is ready. Save your first setup, then log your trades to see your stats and expectancy. Remember to verify your email.", read: false, createdAt: serverTimestamp() });
+    } catch (x) { console.warn(x); }
+    var sent = true;
+    try { await sendEmailVerification(cred.user); } catch (x) { sent = false; console.warn(x); }
+    show(sent ? "Account created. We sent a verification link to your email. Taking you in..." : "Account created. Taking you in...", "ok");
+    setTimeout(function () { location.replace(AFTER_LOGIN); }, 1800);
   } catch (err) {
     busy = false; $("go").disabled = false; $("gol").textContent = "Create account";
     show(friendlyError(err.code), "err");
