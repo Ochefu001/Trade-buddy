@@ -121,6 +121,17 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .acts button{background:transparent;border:1px solid var(--line);color:#c4d3ca;font:inherit;font-size:13px;font-weight:600;border-radius:999px;padding:7px 14px;cursor:pointer}
 .acts .pri{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.4);color:var(--b2)}
 .acts .dl{margin-left:auto;color:var(--bad);border-color:transparent}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pager button{min-width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mute);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0 10px}
+.pager button.on{background:var(--brand);border-color:var(--brand);color:#03150a}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager span{color:var(--mute);padding:0 2px}
+.pcount{text-align:center;color:var(--mute);font-size:12.5px;margin-top:10px}
+.srch{position:relative}
+.srch input{padding-left:42px;padding-right:42px;margin-bottom:0;text-transform:uppercase}
+.srch input::placeholder{text-transform:none}
+.srch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2;stroke-linecap:round}
+.srch .x{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mute);font-size:24px;line-height:1;cursor:pointer;display:none;padding:6px 10px}
 .empty{text-align:center;color:var(--mute);padding:20px 8px}
 .err{color:#fecaca;font-size:14px;margin-top:6px}
 .res{border-radius:14px;padding:14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);margin-top:4px}
@@ -200,7 +211,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
   <!-- MY SETUPS (list page) -->
   <div class="view" id="v-setuplist">
     <div class="stats"><div><b id="nA">0</b><span>Active</span></div><div><b id="nE">0</b><span>Entered</span></div><div><b id="nT">0</b><span>Total</span></div></div>
-    <div class="card"><div class="tabs" id="tabs"></div><div id="list"></div></div>
+    <div class="card"><div class="tabs" id="tabs"></div><div id="list"></div><div class="pager" id="pg"></div><div class="pcount" id="pc"></div></div>
     <button class="btn" data-go="setups">+ New setup</button>
   </div>
 
@@ -225,9 +236,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 
   <!-- TRADE HISTORY (list page) -->
   <div class="view" id="v-history">
+    <div class="card"><label for="jq">Instrument</label><div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="jq" placeholder="Search e.g. XAUUSD" autocomplete="off" autocapitalize="characters"><button class="x" id="jqx" aria-label="Clear search">&times;</button></div><div class="tabs" id="ichips" style="margin:10px 0 0"></div></div>
+    <p class="note" id="jhd" style="margin:-4px 0 10px;color:var(--b2);font-weight:600"></p>
     <div class="stats two"><div><b id="jN">0</b><span>Trades</span></div><div><b id="jW">-</b><span>Win rate</span></div><div><b id="jR">0R</b><span>Total R</span></div><div><b id="jP">-</b><span>Plan followed</span></div></div>
     <p class="note" id="jins" style="white-space:pre-wrap;margin:-6px 0 16px"></p>
-    <div class="card"><div class="tabs" id="jtabs"></div><div id="jlist"></div>
+    <div class="card"><div class="tabs" id="jtabs"></div><div id="jlist"></div><div class="pager" id="jpg"></div><div class="pcount" id="jpc"></div>
       <button class="btn o" id="jx">Send results to Expectancy calculator</button>
       <p class="note">Uses your wins and losses. Breakeven trades are left out.</p><div class="err" id="jerr2"></div></div>
     <button class="btn" data-go="journal">+ Log a trade</button>
@@ -316,10 +329,24 @@ var $ = function (i) { return document.getElementById(i); };
 var STATUS = ["Waiting","At POI","Entered","Done"];
 var BROKERS = [{n:"Exness",u:"https://www.exness.com",d:"Forex, metals and crypto CFDs."},{n:"IC Markets",u:"https://www.icmarkets.com",d:"Forex and CFD broker."},{n:"Pepperstone",u:"https://pepperstone.com",d:"Forex and CFD broker."},{n:"XM",u:"https://www.xm.com",d:"Forex and CFD broker."}];
 var PROPS = [{n:"FTMO",u:"https://ftmo.com",d:"Funded trader challenge programme."},{n:"The5ers",u:"https://the5ers.com",d:"Funded trader programmes."},{n:"FundedNext",u:"https://fundednext.com",d:"Funded trader challenges."},{n:"Funding Pips",u:"https://fundingpips.com",d:"Funded trader challenges."}];
-var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null;
+var items = [], filter = "Active", col = null, user = null, jitems = [], jf = "All", jcol = null, sp = 1, jpn = 1, jq = "", PER = 10;
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function setStatus(t, c) { $("st").textContent = t; $("dot").className = "dot " + c; }
 function today() { var d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
+
+/* pagination */
+function pager(id, total, page) {
+  var pages = Math.ceil(total / PER), el = $(id);
+  if (pages <= 1) { el.innerHTML = ""; return; }
+  var set = {};
+  [1, pages, page - 1, page, page + 1].forEach(function (p) { if (p >= 1 && p <= pages) set[p] = 1; });
+  var ks = Object.keys(set).map(Number).sort(function (a, b) { return a - b; }), prev = 0;
+  var h = '<button data-p="' + (page - 1) + '"' + (page === 1 ? " disabled" : "") + ' aria-label="Previous page">&lsaquo;</button>';
+  ks.forEach(function (p) { if (p - prev > 1) h += "<span>&hellip;</span>"; h += '<button data-p="' + p + '"' + (p === page ? ' class="on" aria-current="page"' : "") + ">" + p + "</button>"; prev = p; });
+  h += '<button data-p="' + (page + 1) + '"' + (page === pages ? " disabled" : "") + ' aria-label="Next page">&rsaquo;</button>';
+  el.innerHTML = h;
+}
+function pcount(id, total, page) { $(id).textContent = total ? "Showing " + ((page - 1) * PER + 1) + "-" + Math.min(page * PER, total) + " of " + total : ""; }
 
 /* tabs */
 var TITLES = {setups:"New setup",setuplist:"My setups",journal:"Log a trade",history:"Trade history",calc:"Calculator",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile"};
@@ -359,7 +386,8 @@ function render() {
   function ok(i, t) { return t === "All" || (t === "Active" ? i.s !== "Done" : i.s === t); }
   $("tabs").innerHTML = tabs.map(function (t) { return '<button class="' + (t === filter ? "on" : "") + '" data-t="' + t + '">' + t + " (" + items.filter(function (i) { return ok(i, t); }).length + ")</button>"; }).join("");
   var shown = items.filter(function (i) { return ok(i, filter); });
-  $("list").innerHTML = !shown.length ? '<div class="empty">Nothing here yet.</div>' : shown.map(function (i) {
+  sp = Math.min(sp, Math.max(1, Math.ceil(shown.length / PER)));
+  $("list").innerHTML = !shown.length ? '<div class="empty">Nothing here yet.</div>' : shown.slice((sp - 1) * PER, sp * PER).map(function (i) {
     var nx = STATUS[Math.min(STATUS.indexOf(i.s) + 1, 3)], up = i.b === "Bullish";
     function row(k, v) { return v ? '<div class="kv"><span>' + k + '</span><p>' + esc(v) + '</p></div>' : ""; }
     return '<div class="item ' + esc(i.s).replace(" ", "") + '"><div class="cd-h"><div><span class="pair">' + esc(i.p) + '</span><span class="pill st">' + esc(i.s) + '</span></div><span class="dir ' + esc(i.b) + '">' + (up ? "&#8599; " : "&#8600; ") + esc(i.b) + '</span></div>' +
@@ -368,6 +396,7 @@ function render() {
       '<div class="acts">' + (i.s !== "Done" ? '<button class="pri" data-a="next" data-id="' + i.id + '">Mark ' + nx + '</button>' : "") +
       '<button data-a="log" data-id="' + i.id + '">Log trade</button><button data-a="inv" data-id="' + i.id + '">Invalidated</button><button class="dl" data-a="del" data-id="' + i.id + '">Delete</button></div></div>';
   }).join("");
+  pager("pg", shown.length, sp); pcount("pc", shown.length, sp);
   alerts();
 }
 function alerts() {
@@ -380,7 +409,8 @@ function alerts() {
   $("al2").innerHTML = a.length ? a.map(function (t) { return '<div class="li"><p style="color:var(--ink)">' + esc(t) + "</p></div>"; }).join("") : '<div class="empty">You are all caught up.</div>';
   $("bd").style.display = a.length ? "" : "none"; $("bd").textContent = a.length; $("md").style.display = a.length ? "" : "none";
 }
-$("tabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { filter = t; render(); } };
+$("tabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { filter = t; sp = 1; render(); } };
+$("pg").onclick = function (e) { var b = e.target.closest("button"); if (b && !b.disabled) { sp = +b.getAttribute("data-p"); render(); window.scrollTo({ top: 0, behavior: "smooth" }); } };
 $("add").onclick = async function () {
   var p = $("pair").value.trim().toUpperCase(); $("err").textContent = "";
   if (!p) { $("pair").focus(); return; }
@@ -388,7 +418,7 @@ $("add").onclick = async function () {
   try {
     await addDoc(col, { p: p, b: $("bias").value, htf: tfVal("htf"), htfn: $("htfn").value.trim(), ltf: tfVal("ltf"), ltfn: $("ltfn").value.trim(), poi: $("poi").value.trim(), c: $("note").value.trim(), s: "Waiting", createdAt: serverTimestamp() });
     ["pair", "htfn", "ltfn", "poi", "note", "htfc", "ltfc"].forEach(function (x) { $(x).value = ""; });
-    filter = "Active"; go("setuplist");
+    filter = "Active"; sp = 1; go("setuplist");
   } catch (e) { $("err").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("add").disabled = false;
 };
@@ -408,11 +438,12 @@ $("list").onclick = async function (e) {
 };
 
 /* journal */
-function by(k) { return jitems.filter(function (i) { return i.r === k; }); }
+function jview() { return jq ? jitems.filter(function (i) { return String(i.p).indexOf(jq) > -1; }) : jitems; }
+function by(k) { return jview().filter(function (i) { return i.r === k; }); }
 function jrender() {
-  var n = jitems.length, w = by("Win"), l = by("Loss");
-  var tot = jitems.reduce(function (s, i) { return s + (i.rs || 0); }, 0);
-  var fp = jitems.filter(function (i) { return i.fp === "Yes"; });
+  var V = jview(), n = V.length, w = by("Win"), l = by("Loss");
+  var tot = V.reduce(function (s, i) { return s + (i.rs || 0); }, 0);
+  var fp = V.filter(function (i) { return i.fp === "Yes"; });
   $("jN").textContent = n;
   $("jW").textContent = n ? Math.round(w.length / n * 100) + "%" : "-";
   $("jR").textContent = (tot > 0 ? "+" : "") + tot.toFixed(1) + "R";
@@ -421,14 +452,24 @@ function jrender() {
   l.forEach(function (i) { emo[i.em] = (emo[i.em] || 0) + 1; });
   var top = Object.keys(emo).sort(function (a, b) { return emo[b] - emo[a]; })[0];
   if (top && l.length >= 3) ins.push("Most losses (" + emo[top] + " of " + l.length + ") came when you felt " + top + ".");
-  var no = jitems.filter(function (i) { return i.fp === "No"; });
+  var no = V.filter(function (i) { return i.fp === "No"; });
   function wr(a) { return Math.round(a.filter(function (i) { return i.r === "Win"; }).length / a.length * 100); }
   if (fp.length && no.length) ins.push("Win rate: " + wr(fp) + "% when you followed your plan, " + wr(no) + "% when you didn't.");
-  $("jins").textContent = ins.join("\n");
+  var aw = w.length ? w.reduce(function (s, i) { return s + (i.rs || 0); }, 0) / w.length : 0, al = l.length ? Math.abs(l.reduce(function (s, i) { return s + (i.rs || 0); }, 0)) / l.length : 0;
+  var base = [];
+  if (n) base.push(w.length + " wins, " + l.length + " losses, " + by("BE").length + " breakeven");
+  if (w.length || l.length) { var tw = w.length + l.length, ex = (w.length / tw) * aw - (l.length / tw) * al; base.push("Avg win +" + aw.toFixed(2) + "R, avg loss -" + al.toFixed(2) + "R\nExpectancy " + (ex > 0 ? "+" : ex < 0 ? "-" : "") + Math.abs(ex).toFixed(2) + "R per trade"); }
+  $("jins").textContent = base.concat(ins).join("\n");
+  $("jhd").textContent = jq ? "Stats for " + jq : "Stats for all instruments";
+  $("jqx").style.display = jq ? "block" : "none";
+  var cnt = {}; jitems.forEach(function (i) { cnt[i.p] = (cnt[i.p] || 0) + 1; });
+  var names = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 12);
+  $("ichips").innerHTML = names.length ? ['<button class="' + (!jq ? "on" : "") + '" data-i="">All</button>'].concat(names.map(function (p) { return '<button class="' + (jq === p ? "on" : "") + '" data-i="' + esc(p) + '">' + esc(p) + " (" + cnt[p] + ")</button>"; })).join("") : "";
   var JT = [["All","All"],["Win","Wins"],["Loss","Losses"],["BE","Breakeven"]];
   $("jtabs").innerHTML = JT.map(function (t) { return '<button class="' + (t[0] === jf ? "on" : "") + '" data-t="' + t[0] + '">' + t[1] + " (" + (t[0] === "All" ? n : by(t[0]).length) + ")</button>"; }).join("");
-  var shown = jf === "All" ? jitems : by(jf);
-  $("jlist").innerHTML = !shown.length ? '<div class="empty">No trades logged yet.</div>' : shown.map(function (i) {
+  var shown = jf === "All" ? V : by(jf);
+  jpn = Math.min(jpn, Math.max(1, Math.ceil(shown.length / PER)));
+  $("jlist").innerHTML = !shown.length ? '<div class="empty">' + (jq ? "No trades found for " + esc(jq) + "." : "No trades logged yet.") + '</div>' : shown.slice((jpn - 1) * PER, jpn * PER).map(function (i) {
     var rs = i.rs || 0, big = i.r === "BE" ? "BE" : (rs > 0 ? "+" : "&minus;") + Math.abs(rs) + "R";
     var mny = i.pl ? (i.pl < 0 ? "&minus;" : "+") + "$" + Math.abs(i.pl) : "";
     return '<div class="item ' + esc(i.r) + '"><div class="cd-h"><div><span class="pair">' + esc(i.p) + '</span><span class="pill">' + esc(i.d) + '</span></div><div class="res2 ' + esc(i.r) + '"><b>' + big + '</b>' + (mny ? '<small>' + mny + '</small>' : "") + '</div></div>' +
@@ -436,8 +477,13 @@ function jrender() {
       (i.n ? '<p class="lesson">' + esc(i.n) + '</p>' : "") +
       '<div class="acts"><button class="dl" data-a="jdel" data-id="' + i.id + '">Delete</button></div></div>';
   }).join("");
+  pager("jpg", shown.length, jpn); pcount("jpc", shown.length, jpn);
 }
-$("jtabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { jf = t; jrender(); } };
+$("jtabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { jf = t; jpn = 1; jrender(); } };
+$("jpg").onclick = function (e) { var b = e.target.closest("button"); if (b && !b.disabled) { jpn = +b.getAttribute("data-p"); jrender(); window.scrollTo({ top: 0, behavior: "smooth" }); } };
+$("jq").oninput = function () { jq = this.value.trim().toUpperCase(); jpn = 1; jrender(); };
+$("jqx").onclick = function () { jq = ""; $("jq").value = ""; jpn = 1; jrender(); };
+$("ichips").onclick = function (e) { var b = e.target.closest("button"); if (b) { jq = b.getAttribute("data-i"); $("jq").value = jq; jpn = 1; jrender(); } };
 $("jadd").onclick = async function () {
   var p = $("jp").value.trim().toUpperCase(), res = $("jr").value, m = Math.abs(parseFloat($("jrr").value)), pl = parseFloat($("jpl").value);
   $("jerr").textContent = "";
@@ -448,7 +494,7 @@ $("jadd").onclick = async function () {
   try {
     await addDoc(jcol, { p: p, d: $("jd").value, r: res, rs: res === "Win" ? m : res === "Loss" ? -m : 0, pl: isNaN(pl) ? null : res === "Win" ? Math.abs(pl) : res === "Loss" ? -Math.abs(pl) : pl, dt: $("jdt").value || today(), em: $("jem").value, fp: $("jfp").value, n: $("jn").value.trim(), createdAt: serverTimestamp() });
     ["jp", "jrr", "jpl", "jn"].forEach(function (x) { $(x).value = ""; });
-    jf = "All"; go("history");
+    jf = "All"; jpn = 1; jq = ""; $("jq").value = ""; go("history");
   } catch (e) { $("jerr").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("jadd").disabled = false;
 };
