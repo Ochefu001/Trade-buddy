@@ -14,7 +14,7 @@ a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
 .glow{position:fixed;inset:0;pointer-events:none}
 .glow::before{content:"";position:absolute;left:50%;top:-260px;width:860px;height:560px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(34,197,94,.2),transparent)}
 .wrap{position:relative;max-width:720px;margin:0 auto;padding:0 16px 60px}
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.top{display:flex;align-items:center;gap:12px;padding:12px 0;position:sticky;top:0;z-index:30;background:var(--bg)}
 .logo{font-weight:800;font-size:19px;display:flex;align-items:center;gap:9px}
 .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#15803d);display:grid;place-items:center}
 .mark svg{width:16px;height:16px}
@@ -22,10 +22,16 @@ a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
 .hello p{color:var(--mute);margin-top:4px;font-size:14.5px}
 .status{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--amb)}.dot.ok{background:var(--brand);box-shadow:0 0 10px var(--brand)}.dot.bad{background:var(--bad)}
-.nav{display:flex;gap:6px;overflow-x:auto;position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0;margin-top:6px;scrollbar-width:none}
-.nav::-webkit-scrollbar{display:none}
-.nav button{white-space:nowrap;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mute);font:inherit;font-size:14px;font-weight:600;border-radius:999px;padding:9px 16px;cursor:pointer}
-.nav button.on{background:var(--brand);color:#03150a;border-color:var(--brand)}
+.menu-btn{position:relative;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.menu-btn svg{width:20px;height:20px}
+.mdot{position:absolute;top:7px;right:7px;width:9px;height:9px;border-radius:50%;background:var(--bad)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,82vw);background:var(--s1);border-right:1px solid var(--line);transform:translateX(-100%);transition:transform .22s;z-index:50;padding:calc(18px + env(safe-area-inset-top,0px)) 14px 24px;overflow-y:auto;visibility:hidden}
+body.mo .scrim{opacity:1;pointer-events:auto}body.mo .drawer{transform:none;visibility:visible}
+.drawer a{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-radius:12px;font-weight:600;color:var(--mute);margin-bottom:4px}
+.drawer a.on{background:var(--brand);color:#03150a}
+.ph{font-size:clamp(24px,6vw,34px);font-weight:800;letter-spacing:-1px;margin:4px 0 12px}
+@media (prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
 .badge{display:inline-block;min-width:18px;background:var(--bad);color:#fff;border-radius:9px;font-size:11px;padding:0 5px;margin-left:5px}
 .view{display:none}.view.on{display:block}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 16px}
@@ -72,13 +78,15 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 </head>
 <body>
 <div class="glow"></div>
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="Menu">
+  <a href="#setups" data-v="setups">Setups</a><a href="#journal" data-v="journal">Journal</a><a href="#calc" data-v="calc">Calculator</a><a href="#brokers" data-v="brokers">Top brokers</a><a href="#prop" data-v="prop">Prop firms</a><a href="#alerts" data-v="alerts">Notifications<span class="badge" id="bd" style="display:none"></span></a><a href="#profile" data-v="profile">Profile</a>
+</nav>
 <div class="wrap">
-  <div class="top"><a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a></div>
-  <div class="hello"><h1 id="hi">Welcome</h1><p>Plan from the higher timeframe, execute on the lower.</p><div class="status"><span class="dot" id="dot"></span><span id="st">Connecting...</span></div></div>
+  <div class="top"><button class="menu-btn" id="mb" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="mdot" id="md" style="display:none"></span></button><a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a></div>
+  <div class="hello" id="hello"><h1 id="hi">Welcome</h1><p>Plan from the higher timeframe, execute on the lower.</p><div class="status"><span class="dot" id="dot"></span><span id="st">Connecting...</span></div></div>
 
-  <div class="nav" id="nav">
-    <button data-v="setups" class="on">Setups</button><button data-v="journal">Journal</button><button data-v="calc">Calculator</button><button data-v="brokers">Top brokers</button><button data-v="prop">Prop firms</button><button data-v="alerts">Notifications<span class="badge" id="bd" style="display:none"></span></button><button data-v="profile">Profile</button>
-  </div>
+  <h1 class="ph" id="pt" style="display:none"></h1>
 
   <div class="view on" id="v-setups">
     <div class="stats"><div><b id="nA">0</b><span>Active</span></div><div><b id="nE">0</b><span>Entered</span></div><div><b id="nT">0</b><span>Total</span></div></div>
@@ -111,7 +119,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
         <div><label>Direction</label><select id="jd"><option>Long</option><option>Short</option></select></div>
         <div><label>Result</label><select id="jr"><option>Win</option><option>Loss</option><option>BE</option></select></div>
         <div><label>R size (positive number)</label><input id="jrr" inputmode="decimal" placeholder="e.g. 2"></div>
-        <div><label>Profit / loss $ (optional)</label><input id="jpl" inputmode="decimal" placeholder="e.g. -50"></div>
+        <div><label>Amount made or lost ($)</label><input id="jpl" inputmode="decimal" placeholder="e.g. 150"></div>
         <div><label>Date</label><input id="jdt" type="date"></div>
         <div><label>How did you feel?</label><select id="jem"><option>Calm</option><option>Confident</option><option>Hesitant</option><option>Anxious</option><option>FOMO</option><option>Greedy</option><option>Revenge</option><option>Bored</option></select></div>
         <div><label>Followed your plan?</label><select id="jfp"><option>Yes</option><option>No</option></select></div>
@@ -135,7 +143,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
       <p class="note">For pairs not quoted in USD (e.g. USDJPY), convert the result using the quote currency, or use a custom contract size.</p></div>
     <div class="card"><h2>Expectancy</h2>
       <div class="g2"><div><label>Win rate (%)</label><input class="ei" id="wr" inputmode="decimal"></div><div></div>
-      <div><label>Average win</label><input class="ei" id="aw" inputmode="decimal" placeholder="e.g. 2.1 (R) or $"></div><div><label>Average loss</label><input class="ei" id="al" inputmode="decimal" placeholder="e.g. 1"></div></div>
+      <div><label>Average win ($)</label><input class="ei" id="aw" inputmode="decimal" placeholder="e.g. 150"></div><div><label>Average loss ($)</label><input class="ei" id="al" inputmode="decimal" placeholder="e.g. 100"></div></div>
       <div class="res"><b id="ex">-</b><span id="exd">(win rate &times; avg win) &minus; (loss rate &times; avg loss)</span></div></div>
   </div>
 
@@ -170,13 +178,22 @@ function setStatus(t, c) { $("st").textContent = t; $("dot").className = "dot " 
 function today() { var d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
 
 /* tabs */
+var TITLES = {setups:"Setups",journal:"Journal",calc:"Calculator",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile"};
+function menu(o) { document.body.classList.toggle("mo", o); $("mb").setAttribute("aria-expanded", o); $("mb").setAttribute("aria-label", o ? "Close menu" : "Open menu"); }
 function show(v) {
   document.querySelectorAll(".view").forEach(function (e) { e.classList.toggle("on", e.id === "v-" + v); });
-  document.querySelectorAll("#nav button").forEach(function (b) { b.classList.toggle("on", b.dataset.v === v); });
-  if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+  document.querySelectorAll("#drawer a").forEach(function (a) { a.classList.toggle("on", a.dataset.v === v); });
+  $("hello").style.display = v === "setups" ? "" : "none";
+  $("pt").style.display = v === "setups" ? "none" : ""; $("pt").textContent = TITLES[v];
+  document.title = TITLES[v] + " | Trade Buddy"; menu(false); window.scrollTo(0, 0);
 }
-$("nav").onclick = function (e) { var b = e.target.closest("button"); if (b) show(b.dataset.v); };
-window.addEventListener("hashchange", function () { var h = location.hash.slice(1); if ($("v-" + h)) show(h); });
+function go(v) { if (location.hash === "#" + v) show(v); else location.hash = v; }
+$("mb").onclick = function () { menu(!document.body.classList.contains("mo")); };
+$("scrim").onclick = function () { menu(false); };
+$("drawer").onclick = function (e) { if (e.target.closest("a")) menu(false); };
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") menu(false); });
+window.addEventListener("hashchange", function () { var h = location.hash.slice(1); show($("v-" + h) ? h : "setups"); });
+show($("v-" + location.hash.slice(1)) ? location.hash.slice(1) : "setups");
 
 /* timeframes */
 function tfVal(id) { var v = $(id).value; return v === "Custom" ? ($(id + "c").value.trim().toUpperCase() || "Custom") : v; }
@@ -210,7 +227,7 @@ function alerts() {
     else if (i.s === "Waiting" && i.createdAt && i.createdAt.toMillis && now - i.createdAt.toMillis() > 864e5) a.push(i.p + " has been waiting for " + Math.floor((now - i.createdAt.toMillis()) / 864e5) + " day(s). Still valid?");
   });
   $("al2").innerHTML = a.length ? a.map(function (t) { return '<div class="li"><p style="color:var(--ink)">' + esc(t) + "</p></div>"; }).join("") : '<div class="empty">You are all caught up.</div>';
-  $("bd").style.display = a.length ? "" : "none"; $("bd").textContent = a.length;
+  $("bd").style.display = a.length ? "" : "none"; $("bd").textContent = a.length; $("md").style.display = a.length ? "" : "none";
 }
 $("tabs").onclick = function (e) { var t = e.target.getAttribute("data-t"); if (t) { filter = t; render(); } };
 $("add").onclick = async function () {
@@ -232,7 +249,7 @@ $("list").onclick = async function (e) {
     else if (a === "log") {
       $("jp").value = it.p; $("jd").value = it.b === "Bullish" ? "Long" : "Short";
       $("jn").value = "Setup: HTF " + (it.htf || "-") + ", LTF " + (it.ltf || "-") + ", POI " + (it.poi || "-");
-      show("journal"); window.scrollTo(0, 0);
+      go("journal");
     }
     else if (a === "del" && confirm("Delete " + it.p + "?")) await deleteDoc(ref);
   } catch (err) { $("err").textContent = friendlyError(err.code); }
@@ -262,7 +279,7 @@ function jrender() {
   $("jlist").innerHTML = !shown.length ? '<div class="empty">No trades logged yet.</div>' : shown.map(function (i) {
     var rs = i.rs || 0, res = i.r === "BE" ? "Breakeven" : i.r + " " + (rs > 0 ? "+" : "") + rs + "R";
     return '<div class="item ' + esc(i.r) + '"><div class="it"><span class="pair">' + esc(i.p) + ' <small style="font-weight:400;color:var(--mute)">' + esc(i.d) + '</small></span><span class="' + esc(i.r) + '">' + esc(res) + '</span></div><div class="meta">' +
-      esc(i.dt || "") + (i.pl != null ? "  |  $" + esc(i.pl) : "") + "\nFelt: " + esc(i.em || "-") + "  |  Followed plan: " + esc(i.fp || "-") + (i.n ? "\n" + esc(i.n) : "") +
+      esc(i.dt || "") + (i.pl != null ? "  |  " + (i.pl < 0 ? "-" : i.pl > 0 ? "+" : "") + "$" + Math.abs(i.pl) : "") + "\nFelt: " + esc(i.em || "-") + "  |  Followed plan: " + esc(i.fp || "-") + (i.n ? "\n" + esc(i.n) : "") +
       '</div><div class="acts"><button data-a="jdel" data-id="' + i.id + '">Delete</button></div></div>';
   }).join("");
 }
@@ -272,9 +289,10 @@ $("jadd").onclick = async function () {
   $("jerr").textContent = "";
   if (!p) { $("jp").focus(); return; }
   if (res !== "BE" && !(m > 0)) { $("jerr").textContent = "Enter the R size as a positive number, e.g. 2."; return; }
+  if (res !== "BE" && isNaN(pl)) { $("jerr").textContent = "Enter the amount made or lost in $."; return; }
   $("jadd").disabled = true;
   try {
-    await addDoc(jcol, { p: p, d: $("jd").value, r: res, rs: res === "Win" ? m : res === "Loss" ? -m : 0, pl: isNaN(pl) ? null : pl, dt: $("jdt").value || today(), em: $("jem").value, fp: $("jfp").value, n: $("jn").value.trim(), createdAt: serverTimestamp() });
+    await addDoc(jcol, { p: p, d: $("jd").value, r: res, rs: res === "Win" ? m : res === "Loss" ? -m : 0, pl: isNaN(pl) ? null : res === "Win" ? Math.abs(pl) : res === "Loss" ? -Math.abs(pl) : pl, dt: $("jdt").value || today(), em: $("jem").value, fp: $("jfp").value, n: $("jn").value.trim(), createdAt: serverTimestamp() });
     ["jp", "jrr", "jpl", "jn"].forEach(function (x) { $(x).value = ""; });
   } catch (e) { $("jerr").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("jadd").disabled = false;
@@ -285,11 +303,12 @@ $("jlist").onclick = async function (e) {
   try { if (it && confirm("Delete this " + it.p + " trade?")) await deleteDoc(doc(jcol, id)); } catch (err) { $("jerr2").textContent = friendlyError(err.code); }
 };
 $("jx").onclick = function () {
-  var w = by("Win"), l = by("Loss"); $("jerr2").textContent = "";
-  if (!w.length || !l.length) { $("jerr2").textContent = "Log at least one win and one loss first."; return; }
-  function avg(a) { return a.reduce(function (s, i) { return s + Math.abs(i.rs); }, 0) / a.length; }
+  var w = by("Win").filter(function (i) { return i.pl != null; }), l = by("Loss").filter(function (i) { return i.pl != null; });
+  $("jerr2").textContent = "";
+  if (!w.length || !l.length) { $("jerr2").textContent = "Log at least one win and one loss with a $ amount first."; return; }
+  function avg(a) { return a.reduce(function (s, i) { return s + Math.abs(i.pl); }, 0) / a.length; }
   $("wr").value = (w.length / (w.length + l.length) * 100).toFixed(1); $("aw").value = avg(w).toFixed(2); $("al").value = avg(l).toFixed(2);
-  expc(); show("calc"); window.scrollTo(0, 0);
+  expc(); go("calc");
 };
 
 /* calculators */
@@ -308,8 +327,8 @@ function expc() {
   var w = n("wr"), aw = n("aw"), al = n("al");
   if (!(w >= 0 && w <= 100 && aw >= 0 && al >= 0)) { $("ex").textContent = "-"; return; }
   var e = (w / 100) * aw - (1 - w / 100) * al;
-  $("ex").textContent = (e > 0 ? "+" : "") + e.toFixed(2);
-  $("exd").textContent = "per trade, in your unit (R or $)\n" + (e > 0 ? "Positive edge: this strategy makes money over many trades." : "No edge yet: this strategy loses or breaks even over many trades.");
+  $("ex").textContent = (e > 0 ? "+" : e < 0 ? "-" : "") + "$" + Math.abs(e).toFixed(2);
+  $("exd").textContent = "per trade\n" + (e > 0 ? "Positive edge: this strategy makes money over many trades." : "No edge yet: this strategy loses or breaks even over many trades.");
 }
 document.querySelectorAll(".ei").forEach(function (e) { e.oninput = expc; });
 
@@ -334,7 +353,6 @@ onAuthStateChanged(auth, function (u) {
   onSnapshot(query(jcol, orderBy("createdAt", "desc")), function (snap) {
     jitems = snap.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; }); jrender();
   }, function (e) { $("jerr").textContent = friendlyError(e.code); });
-  var h = location.hash.slice(1); if ($("v-" + h)) show(h);
 });
 </script>
 </body>
