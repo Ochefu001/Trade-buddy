@@ -102,6 +102,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .li a{border:1px solid var(--b2);color:var(--b2);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:700;white-space:nowrap}
 .pf div{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
 .pf span{color:var(--mute)}
+.cbar{position:sticky;top:66px;z-index:25;display:flex;gap:8px;overflow-x:auto;padding:10px 0 12px;margin:0 0 4px;background:linear-gradient(var(--bg) 78%,rgba(6,12,9,0));scrollbar-width:none}
+.cbar::-webkit-scrollbar{display:none}
+.cbar button{flex:none;font:inherit;font-size:14px;font-weight:600;color:var(--mute);background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.cbar button.on{background:var(--brand);border-color:var(--brand);color:#03150a;box-shadow:0 4px 18px rgba(34,197,94,.35)}
+.cc{display:none}.cc.on{display:block}
+.card .sub{color:var(--mute);font-size:13.5px;margin:-6px 0 12px}
 button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:3px}
 </style>
 </head>
@@ -199,18 +205,61 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
   </div>
 
   <div class="view" id="v-calc">
-    <div class="card"><h2>Position size</h2>
+    <div class="cbar" id="cbar" role="tablist" aria-label="Calculators">
+      <button class="on" data-c="lot">Lot size</button><button data-c="pos">Position</button><button data-c="ruin">Risk of ruin</button><button data-c="dd">Drawdown</button><button data-c="lev">Leverage</button><button data-c="con">Consistency</button><button data-c="fx">Currency</button><button data-c="exp">Expectancy</button>
+    </div>
+    <div class="cc on" id="c-lot"><div class="card"><h2>Lot size</h2><p class="sub">The lot to use for a percentage risk.</p>
       <label>Instrument</label><select id="ins"><option value="100000">Forex (USD quote, e.g. EURUSD)</option><option value="100">Gold XAUUSD</option><option value="5000">Silver XAGUSD</option><option value="1">Crypto / 1 unit</option><option value="c">Custom contract size</option></select>
       <input id="cs" inputmode="decimal" placeholder="Contract size (units per 1 lot)" style="display:none">
       <div class="g2"><div><label>Balance ($)</label><input class="ci" id="bal" inputmode="decimal"></div><div><label>Risk (%)</label><input class="ci" id="rk" inputmode="decimal" value="1"></div>
       <div><label>Entry price</label><input class="ci" id="en" inputmode="decimal"></div><div><label>Stop loss price</label><input class="ci" id="sl" inputmode="decimal"></div></div>
       <label>Take profit price (optional)</label><input class="ci" id="tp" inputmode="decimal">
       <div class="res"><b id="lot">-</b><span id="lotd">Fill in the fields above.</span></div>
-      <p class="note">For pairs not quoted in USD (e.g. USDJPY), convert the result using the quote currency, or use a custom contract size.</p></div>
+      <p class="note">For pairs not quoted in USD (e.g. USDJPY), convert the result using the quote currency, or use a custom contract size.</p></div></div>
+
+    <div class="cc" id="c-pos"><div class="card"><h2>Position size</h2><p class="sub">Units and position value for a percentage risk. Works for crypto, stocks and anything priced in USD.</p>
+      <div class="g2"><div><label>Balance ($)</label><input class="pi" id="pbal" inputmode="decimal"></div><div><label>Risk (%)</label><input class="pi" id="prk" inputmode="decimal" value="1"></div>
+      <div><label>Entry price</label><input class="pi" id="pen" inputmode="decimal"></div><div><label>Stop loss price</label><input class="pi" id="psl" inputmode="decimal"></div></div>
+      <div class="res"><b id="pos">-</b><span id="posd">Fill in the fields above.</span></div></div></div>
+
+    <div class="cc" id="c-ruin"><div class="card"><h2>Risk of ruin</h2><p class="sub">Your chance of losing a set share of your account with your current numbers.</p>
+      <div class="g2"><div><label>Win rate (%)</label><input class="ri" id="rw" inputmode="decimal" placeholder="e.g. 45"></div><div><label>Average reward : risk</label><input class="ri" id="rb" inputmode="decimal" value="2"></div>
+      <div><label>Risk per trade (%)</label><input class="ri" id="rr" inputmode="decimal" value="1"></div><div><label>Ruin level (% of account lost)</label><input class="ri" id="rl" inputmode="decimal" value="50"></div></div>
+      <div class="res"><b id="ru">-</b><span id="rud">Fill in the fields above.</span></div>
+      <p class="note">A rough estimate. It assumes every trade risks the same percentage and trades are independent. Real results are usually a bit worse.</p></div></div>
+
+    <div class="cc" id="c-dd"><div class="card"><h2>Drawdown</h2><p class="sub">How far you are down from your peak, and what it takes to recover.</p>
+      <div class="g2"><div><label>Peak balance ($)</label><input class="di" id="dpk" inputmode="decimal"></div><div><label>Current balance ($)</label><input class="di" id="dcu" inputmode="decimal"></div></div>
+      <label>Max drawdown limit (%) (optional)</label><input class="di" id="dlm" inputmode="decimal" placeholder="e.g. 10 for a prop firm">
+      <div class="res"><b id="dd">-</b><span id="ddd">Fill in your peak and current balance.</span></div></div></div>
+
+    <div class="cc" id="c-lev"><div class="card"><h2>Leverage</h2><p class="sub">Your effective leverage and the margin a trade ties up.</p>
+      <label>Instrument</label><select class="vi" id="lvins"><option value="100000">Forex (100,000 per lot)</option><option value="100">Gold XAUUSD</option><option value="5000">Silver XAGUSD</option><option value="1">Crypto / 1 unit</option><option value="c">Custom contract size</option></select>
+      <input class="vi" id="lvcs" inputmode="decimal" placeholder="Contract size (units per 1 lot)" style="display:none">
+      <div class="g2"><div><label>Lots</label><input class="vi" id="lvl" inputmode="decimal"></div><div><label>Price</label><input class="vi" id="lvp" inputmode="decimal"></div>
+      <div><label>Balance ($)</label><input class="vi" id="lvb" inputmode="decimal"></div><div><label>Broker leverage (1 : ?)</label><input class="vi" id="lvx" inputmode="decimal" value="100"></div></div>
+      <div class="res"><b id="lv">-</b><span id="lvd">Fill in the fields above.</span></div>
+      <p class="note">For pairs where USD is the first currency (e.g. USDJPY), enter 1 as the price.</p></div></div>
+
+    <div class="cc" id="c-con"><div class="card"><h2>Consistency</h2><p class="sub">Check the prop firm rule that limits how much of your profit can come from one day.</p>
+      <div class="g2"><div><label>Total profit ($)</label><input class="ki" id="ctp" inputmode="decimal"></div><div><label>Best single day ($)</label><input class="ki" id="cbd" inputmode="decimal"></div></div>
+      <label>Consistency limit (%)</label><input class="ki" id="ccl" inputmode="decimal" value="30">
+      <div class="res"><b id="co">-</b><span id="cod">Fill in the fields above.</span></div>
+      <p class="note">Limits differ by firm and program. Check yours in the rules.</p></div></div>
+
+    <div class="cc" id="c-fx"><div class="card"><h2>Currency converter</h2><p class="sub">Quick conversions, like your account currency to your local one.</p>
+      <label>Amount</label><input class="fi" id="fxa" inputmode="decimal" value="100">
+      <div class="g2"><div><label>From</label><select class="fi" id="fxf"></select></div><div><label>To</label><select class="fi" id="fxt"></select></div></div>
+      <button class="btn o" id="fxsw" style="margin:0 0 10px">Swap currencies</button>
+      <label>Custom rate (optional): 1 from = ? to</label><input class="fi" id="fxr" inputmode="decimal" placeholder="Leave empty to use live rates">
+      <div class="res"><b id="fx">-</b><span id="fxd">Enter an amount.</span></div>
+      <p class="note" id="fxs"></p></div></div>
+
+    <div class="cc" id="c-exp">
     <div class="card"><h2>Expectancy</h2>
       <div class="g2"><div><label>Win rate (%)</label><input class="ei" id="wr" inputmode="decimal"></div><div></div>
       <div><label>Average win ($)</label><input class="ei" id="aw" inputmode="decimal" placeholder="e.g. 150"></div><div><label>Average loss ($)</label><input class="ei" id="al" inputmode="decimal" placeholder="e.g. 100"></div></div>
-      <div class="res"><b id="ex">-</b><span id="exd">(win rate &times; avg win) &minus; (loss rate &times; avg loss)</span></div></div>
+      <div class="res"><b id="ex">-</b><span id="exd">(win rate &times; avg win) &minus; (loss rate &times; avg loss)</span></div></div></div>
   </div>
 
   <div class="view" id="v-brokers"><div class="card"><h2>Top brokers</h2><div id="bl"></div><p class="note">A starting list, not an endorsement. Check that a broker is regulated and available in your country, and read the fees and withdrawal terms before you deposit.</p></div></div>
@@ -380,7 +429,7 @@ $("jx").onclick = function () {
   if (!w.length || !l.length) { $("jerr2").textContent = "Log at least one win and one loss with a $ amount first."; return; }
   function avg(a) { return a.reduce(function (s, i) { return s + Math.abs(i.pl); }, 0) / a.length; }
   $("wr").value = (w.length / (w.length + l.length) * 100).toFixed(1); $("aw").value = avg(w).toFixed(2); $("al").value = avg(l).toFixed(2);
-  expc(); go("calc");
+  expc(); selCalc("exp"); go("calc");
 };
 
 /* calculators */
@@ -403,6 +452,115 @@ function expc() {
   $("exd").textContent = "per trade\n" + (e > 0 ? "Positive edge: this strategy makes money over many trades." : "No edge yet: this strategy loses or breaks even over many trades.");
 }
 document.querySelectorAll(".ei").forEach(function (e) { e.oninput = expc; });
+
+/* calculator picker */
+function selCalc(id) {
+  document.querySelectorAll(".cc").forEach(function (e) { e.classList.toggle("on", e.id === "c-" + id); });
+  var bar = $("cbar");
+  bar.querySelectorAll("button").forEach(function (b) {
+    var on = b.getAttribute("data-c") === id; b.classList.toggle("on", on);
+    if (on) bar.scrollTo({ left: b.offsetLeft - bar.clientWidth / 2 + b.offsetWidth / 2, behavior: "smooth" });
+  });
+  if (id === "fx") loadFx();
+}
+$("cbar").onclick = function (e) { var b = e.target.closest("button"); if (b) selCalc(b.getAttribute("data-c")); };
+
+function fmt(x, d) { return x.toLocaleString("en-US", { maximumFractionDigits: d == null ? 2 : d, minimumFractionDigits: 0 }); }
+function money(x) { return "$" + fmt(x, 2); }
+function out(b, d, big, desc) { $(b).textContent = big; $(d).textContent = desc; }
+
+/* position size */
+function calcPos() {
+  var bal = n("pbal"), rk = n("prk"), en = n("pen"), sl = n("psl");
+  if (!(bal > 0 && rk > 0 && en > 0 && sl > 0) || en === sl) { out("pos", "posd", "-", "Fill in balance, risk, entry and stop loss."); return; }
+  var risk = bal * rk / 100, u = risk / Math.abs(en - sl), val = u * en;
+  out("pos", "posd", fmt(u, 4) + " units", "Risk: " + money(risk) + "\nPosition value: " + money(val) + "\nLeverage used: " + fmt(val / bal, 2) + "x");
+}
+document.querySelectorAll(".pi").forEach(function (e) { e.oninput = calcPos; });
+
+/* risk of ruin */
+function calcRuin() {
+  var p = n("rw") / 100, b = n("rb"), rk = n("rr"), lim = n("rl");
+  if (!(p >= 0 && p <= 1 && b > 0 && rk > 0 && lim > 0)) { out("ru", "rud", "-", "Fill in win rate, reward : risk, risk per trade and ruin level."); return; }
+  var N = lim / rk, E = p * b - (1 - p), pr;
+  function g(t) { return p * Math.exp(-t * b) + (1 - p) * Math.exp(t) - 1; }
+  if (p >= 1) pr = 0;
+  else if (E <= 0 || g(1e-6) >= 0) pr = 1;
+  else {
+    var lo = 1e-6, hi = 1e-3, k = 0;
+    while (g(hi) < 0 && k < 80) { lo = hi; hi *= 2; k++; }
+    for (var i = 0; i < 100; i++) { var m = (lo + hi) / 2; if (g(m) < 0) lo = m; else hi = m; }
+    pr = Math.min(1, Math.exp(-hi * N));
+  }
+  var big = pr >= 0.9995 ? "~100%" : pr < 0.0001 ? "<0.01%" : fmt(pr * 100, pr < 0.1 ? 2 : 1) + "%";
+  var t = "Expectancy: " + (E > 0 ? "+" : "") + fmt(E, 2) + "R per trade\nYou can take " + fmt(N, 1) + " full losses in a row before hitting your ruin level.";
+  if (E <= 0) t += "\nWith no positive edge, ruin is only a matter of time.";
+  else t += "\nMany traders aim for under 1%.";
+  out("ru", "rud", big, t);
+}
+document.querySelectorAll(".ri").forEach(function (e) { e.oninput = calcRuin; });
+
+/* drawdown */
+function calcDD() {
+  var pk = n("dpk"), cu = n("dcu"), lm = n("dlm");
+  if (!(pk > 0 && cu >= 0)) { out("dd", "ddd", "-", "Fill in your peak and current balance."); return; }
+  var dd = pk - cu;
+  if (dd <= 0) { out("dd", "ddd", "0%", "You are at or above your peak. No drawdown."); return; }
+  var rec = cu > 0 ? dd / cu * 100 : null;
+  var t = "Down " + money(dd) + " from your peak\nGain needed to recover: " + (rec == null ? "not possible, the account is at zero" : fmt(rec, 2) + "%");
+  if (lm > 0) {
+    var floor = pk * (1 - lm / 100);
+    t += cu <= floor ? "\nYou have hit your " + lm + "% limit (floor " + money(floor) + ")" : "\nRoom before the " + lm + "% limit: " + money(cu - floor) + " (floor " + money(floor) + ")";
+  }
+  out("dd", "ddd", fmt(dd / pk * 100, 2) + "%", t);
+}
+document.querySelectorAll(".di").forEach(function (e) { e.oninput = calcDD; });
+
+/* leverage */
+function calcLev() {
+  $("lvcs").style.display = $("lvins").value === "c" ? "" : "none";
+  var cs = $("lvins").value === "c" ? n("lvcs") : +$("lvins").value, l = n("lvl"), p = n("lvp"), bal = n("lvb"), x = n("lvx");
+  if (!(cs > 0 && l > 0 && p > 0 && bal > 0 && x > 0)) { out("lv", "lvd", "-", "Fill in lots, price, balance and leverage."); return; }
+  var val = l * cs * p, mg = val / x;
+  out("lv", "lvd", fmt(val / bal, 2) + "x", "Position value: " + money(val) + "\nMargin required: " + money(mg) + " (" + fmt(mg / bal * 100, 1) + "% of balance)\nFree margin: " + money(bal - mg) + (mg > bal ? "\nMargin is more than your balance. This trade is too big." : ""));
+}
+document.querySelectorAll(".vi").forEach(function (e) { e.oninput = calcLev; });
+
+/* consistency */
+function calcCon() {
+  var t = n("ctp"), b = n("cbd"), l = n("ccl");
+  if (!(t > 0 && b >= 0 && l > 0 && l <= 100)) { out("co", "cod", "-", "Fill in total profit, best day and the limit."); return; }
+  var share = b / t * 100, ok = share <= l, need = b / (l / 100);
+  out("co", "cod", fmt(share, 1) + "%", (ok ? "Passes" : "Fails") + " the " + l + "% rule\nBest day allowed: up to " + money(t * l / 100) + (ok ? "" : "\nTotal profit needed with this best day: " + money(need) + " (about " + money(need - t) + " more)"));
+}
+document.querySelectorAll(".ki").forEach(function (e) { e.oninput = calcCon; });
+
+/* currency converter */
+var FXR = null, FXT = "", fxBusy = false;
+var FXC = ["USD", "EUR", "GBP", "NGN", "JPY", "AUD", "CAD", "CHF", "NZD", "ZAR", "GHS", "KES", "AED", "CNY", "INR", "SGD"];
+["fxf", "fxt"].forEach(function (id) { $(id).innerHTML = FXC.map(function (c) { return "<option>" + c + "</option>"; }).join(""); });
+$("fxf").value = "USD"; $("fxt").value = "NGN";
+function calcFx() {
+  var a = n("fxa"), f = $("fxf").value, t = $("fxt").value, cr = n("fxr"), rate = null;
+  if (cr > 0) rate = cr; else if (FXR && FXR[f] && FXR[t]) rate = FXR[t] / FXR[f];
+  if (!(a >= 0) || rate == null) { out("fx", "fxd", "-", a >= 0 ? "Waiting for live rates. You can also enter a custom rate." : "Enter an amount."); return; }
+  out("fx", "fxd", fmt(a * rate, rate < 0.01 ? 6 : 2) + " " + t, "1 " + f + " = " + fmt(rate, rate < 1 ? 6 : 4) + " " + t + (cr > 0 ? "\nUsing your custom rate" : FXT ? "\nLive rate, updated " + FXT + " UTC" : ""));
+}
+function loadFx() {
+  if (FXR || fxBusy) return;
+  fxBusy = true; $("fxs").textContent = "Loading live rates...";
+  fetch("https://open.er-api.com/v6/latest/USD").then(function (r) { return r.json(); }).then(function (d) {
+    if (!d || !d.rates) throw new Error("no rates");
+    FXR = d.rates; FXT = (d.time_last_update_utc || "").slice(5, 22);
+    $("fxs").textContent = "Indicative market rates. Your broker or bank will differ slightly."; fxBusy = false; calcFx();
+  }).catch(function () { fxBusy = false; $("fxs").textContent = "Could not load live rates. Enter a custom rate above."; calcFx(); });
+}
+document.querySelectorAll(".fi").forEach(function (e) { e.oninput = calcFx; });
+$("fxsw").onclick = function () {
+  var f = $("fxf").value; $("fxf").value = $("fxt").value; $("fxt").value = f;
+  var cr = n("fxr"); if (cr > 0) $("fxr").value = (1 / cr).toPrecision(6);
+  calcFx();
+};
 
 /* profile */
 $("out").onclick = function () { signOut(auth).then(function () { location.replace("login.html"); }); };
