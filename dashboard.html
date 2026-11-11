@@ -16,7 +16,7 @@ a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
 .wrap{position:relative;max-width:720px;margin:0 auto;padding:0 16px 60px}
 .top{display:flex;align-items:center;gap:12px;padding:12px 0;position:sticky;top:0;z-index:30;background:var(--bg)}
 .logo{font-weight:800;font-size:19px;display:flex;align-items:center;gap:9px}
-.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#15803d);display:grid;place-items:center}
+.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#15803d);display:grid;place-items:center;flex:none}
 .mark svg{width:16px;height:16px}
 .hello h1{font-size:clamp(24px,6vw,34px);font-weight:800;letter-spacing:-1px}
 .hello p{color:var(--mute);margin-top:4px;font-size:14.5px}
@@ -25,14 +25,43 @@ a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
 .menu-btn{position:relative;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
 .menu-btn svg{width:20px;height:20px}
 .mdot{position:absolute;top:7px;right:7px;width:9px;height:9px;border-radius:50%;background:var(--bad)}
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
-.drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,82vw);background:var(--s1);border-right:1px solid var(--line);transform:translateX(-100%);transition:transform .22s;z-index:50;padding:calc(18px + env(safe-area-inset-top,0px)) 14px 24px;overflow-y:auto;visibility:hidden}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(320px,86vw);background:linear-gradient(180deg,#0f1c15 0%,var(--s1) 38%,#08100c 100%);border-right:1px solid var(--line);box-shadow:20px 0 60px rgba(0,0,0,.5);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);z-index:50;padding:calc(16px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px));overflow-y:auto;visibility:hidden;display:flex;flex-direction:column}
+.drawer::before{content:"";position:absolute;left:-60px;top:-80px;width:260px;height:260px;background:radial-gradient(closest-side,rgba(34,197,94,.28),transparent);pointer-events:none}
 body.mo .scrim{opacity:1;pointer-events:auto}body.mo .drawer{transform:none;visibility:visible}
-.drawer a{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-radius:12px;font-weight:600;color:var(--mute);margin-bottom:4px}
-.drawer a.on{background:var(--brand);color:#03150a}
+.dh{position:relative;display:flex;align-items:center;gap:12px;padding:6px 4px 18px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.dh .mark{width:40px;height:40px;border-radius:12px;box-shadow:0 6px 20px rgba(34,197,94,.35)}
+.dh .mark svg{width:22px;height:22px}
+.dh b{display:block;font-size:20px;font-weight:800;letter-spacing:-.4px;line-height:1.1}
+.dh small{color:var(--mute);font-size:12.5px}
+.dh .grow{flex:1}
+.dx{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--mute);cursor:pointer;display:grid;place-items:center;padding:0}
+.dx svg{width:16px;height:16px}
+.dsec{position:relative;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);opacity:.8;margin:16px 6px 6px;font-weight:700}
+.drawer a{position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;font-weight:600;color:#c4d3ca;margin-bottom:3px;transition:background .15s}
+.drawer a .ic{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);display:grid;place-items:center;flex:none;transition:background .15s}
+.drawer a .ic svg{width:18px;height:18px;stroke:var(--b2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.drawer a .lb{flex:1}
+.drawer a:hover{background:rgba(255,255,255,.05)}
+.drawer a.on{background:linear-gradient(90deg,rgba(34,197,94,.26),rgba(34,197,94,.06));color:#fff;box-shadow:inset 3px 0 0 var(--brand)}
+.drawer a.on .ic{background:var(--brand)}
+.drawer a.on .ic svg{stroke:#03150a}
+.drawer .badge{margin:0}
+.cnt{display:inline-block;min-width:22px;text-align:center;background:rgba(34,197,94,.18);color:var(--b2);border-radius:9px;font-size:12px;padding:1px 7px}
+.dfoot{position:relative;margin-top:auto;padding-top:16px}
+.dfoot div{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:rgba(255,255,255,.04)}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#15803d);color:#03150a;font-weight:800;display:grid;place-items:center;flex:none}
+.dfoot b{display:block;font-size:14.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dfoot small{color:var(--mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.dfoot .tx{min-width:0}
+@keyframes dIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+body.mo .drawer>*{animation:dIn .35s both;animation-delay:calc(var(--i,0) * 28ms + 60ms)}
+@media (prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}body.mo .drawer>*{animation:none}}
+
 .ph{font-size:clamp(24px,6vw,34px);font-weight:800;letter-spacing:-1px;margin:4px 0 12px}
-@media (prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
-.badge{display:inline-block;min-width:18px;background:var(--bad);color:#fff;border-radius:9px;font-size:11px;padding:0 5px;margin-left:5px}
+.badge{display:inline-block;min-width:18px;background:var(--bad);color:#fff;border-radius:9px;font-size:11px;padding:0 5px;margin-left:5px;text-align:center}
 .view{display:none}.view.on{display:block}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 16px}
 .stats.two{grid-template-columns:repeat(2,1fr)}
@@ -80,7 +109,30 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 <div class="glow"></div>
 <div class="scrim" id="scrim"></div>
 <nav class="drawer" id="drawer" aria-label="Menu">
-  <a href="#setups" data-v="setups">Setups</a><a href="#journal" data-v="journal">Journal</a><a href="#calc" data-v="calc">Calculator</a><a href="#brokers" data-v="brokers">Top brokers</a><a href="#prop" data-v="prop">Prop firms</a><a href="#alerts" data-v="alerts">Notifications<span class="badge" id="bd" style="display:none"></span></a><a href="#profile" data-v="profile">Profile</a>
+  <div class="dh">
+    <span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>
+    <div class="grow"><b>Trade Buddy</b><small>Plan. Execute. Review.</small></div>
+    <button class="dx" id="dx" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+
+  <div class="dsec">Setups</div>
+  <a href="#setups" data-v="setups"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><span class="lb">New setup</span></a>
+  <a href="#setuplist" data-v="setuplist"><span class="ic"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></span><span class="lb">My setups</span><span class="cnt" id="cA" style="display:none"></span></a>
+
+  <div class="dsec">Journal</div>
+  <a href="#journal" data-v="journal"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span><span class="lb">Log a trade</span></a>
+  <a href="#history" data-v="history"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="lb">Trade history</span></a>
+
+  <div class="dsec">Tools</div>
+  <a href="#calc" data-v="calc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg></span><span class="lb">Calculator</span></a>
+  <a href="#brokers" data-v="brokers"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span><span class="lb">Top brokers</span></a>
+  <a href="#prop" data-v="prop"><span class="ic"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a3 3 0 003 3M16 6h4v1a3 3 0 01-3 3M12 13v4M8 21h8M10 17h4"/></svg></span><span class="lb">Prop firms</span></a>
+
+  <div class="dsec">Account</div>
+  <a href="#alerts" data-v="alerts"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg></span><span class="lb">Notifications</span><span class="badge" id="bd" style="display:none"></span></a>
+  <a href="#profile" data-v="profile"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="lb">Profile</span></a>
+
+  <div class="dfoot"><div><span class="av" id="dav">T</span><span class="tx"><b id="dn">Trader</b><small id="de"></small></span></div></div>
 </nav>
 <div class="wrap">
   <div class="top"><button class="menu-btn" id="mb" aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="mdot" id="md" style="display:none"></span></button><a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a></div>
@@ -88,8 +140,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
 
   <h1 class="ph" id="pt" style="display:none"></h1>
 
+  <!-- NEW SETUP (form only) -->
   <div class="view on" id="v-setups">
-    <div class="stats"><div><b id="nA">0</b><span>Active</span></div><div><b id="nE">0</b><span>Entered</span></div><div><b id="nT">0</b><span>Total</span></div></div>
     <div class="card">
       <h2>New setup</h2>
       <div class="g2"><div><label>Pair / instrument</label><input id="pair" placeholder="e.g. XAUUSD" autocapitalize="characters"></div><div><label>Bias direction</label><select id="bias"><option>Bullish</option><option>Bearish</option></select></div></div>
@@ -106,13 +158,19 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
       <label>POI</label><input id="poi" placeholder="e.g. H1 OB at 2315.50">
       <label>Extra notes</label><textarea id="note" placeholder="News, risk, reminders"></textarea>
       <button class="btn" id="add">Save setup</button><div class="err" id="err"></div>
+      <button class="btn o" data-go="setuplist">View my setups</button>
     </div>
-    <div class="card"><h2>Your setups</h2><div class="tabs" id="tabs"></div><div id="list"></div></div>
   </div>
 
+  <!-- MY SETUPS (list page) -->
+  <div class="view" id="v-setuplist">
+    <div class="stats"><div><b id="nA">0</b><span>Active</span></div><div><b id="nE">0</b><span>Entered</span></div><div><b id="nT">0</b><span>Total</span></div></div>
+    <div class="card"><div class="tabs" id="tabs"></div><div id="list"></div></div>
+    <button class="btn" data-go="setups">+ New setup</button>
+  </div>
+
+  <!-- LOG A TRADE (form only) -->
   <div class="view" id="v-journal">
-    <div class="stats two"><div><b id="jN">0</b><span>Trades</span></div><div><b id="jW">-</b><span>Win rate</span></div><div><b id="jR">0R</b><span>Total R</span></div><div><b id="jP">-</b><span>Plan followed</span></div></div>
-    <p class="note" id="jins" style="white-space:pre-wrap;margin:-6px 0 16px"></p>
     <div class="card"><h2>Log a trade</h2>
       <div class="g2">
         <div><label>Pair</label><input id="jp" placeholder="e.g. XAUUSD" autocapitalize="characters"></div>
@@ -126,10 +184,18 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--b2);outline-offset:
       </div>
       <label>What did you learn?</label><textarea id="jn" placeholder="What went well, what to fix next time"></textarea>
       <button class="btn" id="jadd">Save trade</button><div class="err" id="jerr"></div>
+      <button class="btn o" data-go="history">View trade history</button>
     </div>
-    <div class="card"><h2>Trade history</h2><div class="tabs" id="jtabs"></div><div id="jlist"></div>
+  </div>
+
+  <!-- TRADE HISTORY (list page) -->
+  <div class="view" id="v-history">
+    <div class="stats two"><div><b id="jN">0</b><span>Trades</span></div><div><b id="jW">-</b><span>Win rate</span></div><div><b id="jR">0R</b><span>Total R</span></div><div><b id="jP">-</b><span>Plan followed</span></div></div>
+    <p class="note" id="jins" style="white-space:pre-wrap;margin:-6px 0 16px"></p>
+    <div class="card"><div class="tabs" id="jtabs"></div><div id="jlist"></div>
       <button class="btn o" id="jx">Send results to Expectancy calculator</button>
       <p class="note">Uses your wins and losses. Breakeven trades are left out.</p><div class="err" id="jerr2"></div></div>
+    <button class="btn" data-go="journal">+ Log a trade</button>
   </div>
 
   <div class="view" id="v-calc">
@@ -178,7 +244,7 @@ function setStatus(t, c) { $("st").textContent = t; $("dot").className = "dot " 
 function today() { var d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
 
 /* tabs */
-var TITLES = {setups:"Setups",journal:"Journal",calc:"Calculator",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile"};
+var TITLES = {setups:"New setup",setuplist:"My setups",journal:"Log a trade",history:"Trade history",calc:"Calculator",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile"};
 function menu(o) { document.body.classList.toggle("mo", o); $("mb").setAttribute("aria-expanded", o); $("mb").setAttribute("aria-label", o ? "Close menu" : "Open menu"); }
 function show(v) {
   document.querySelectorAll(".view").forEach(function (e) { e.classList.toggle("on", e.id === "v-" + v); });
@@ -188,10 +254,13 @@ function show(v) {
   document.title = TITLES[v] + " | Trade Buddy"; menu(false); window.scrollTo(0, 0);
 }
 function go(v) { if (location.hash === "#" + v) show(v); else location.hash = v; }
+document.querySelectorAll("#drawer > *").forEach(function (e, i) { e.style.setProperty("--i", i); });
 $("mb").onclick = function () { menu(!document.body.classList.contains("mo")); };
 $("scrim").onclick = function () { menu(false); };
+$("dx").onclick = function () { menu(false); };
 $("drawer").onclick = function (e) { if (e.target.closest("a")) menu(false); };
 document.addEventListener("keydown", function (e) { if (e.key === "Escape") menu(false); });
+document.addEventListener("click", function (e) { var b = e.target.closest("[data-go]"); if (b) go(b.getAttribute("data-go")); });
 window.addEventListener("hashchange", function () { var h = location.hash.slice(1); show($("v-" + h) ? h : "setups"); });
 show($("v-" + location.hash.slice(1)) ? location.hash.slice(1) : "setups");
 
@@ -207,6 +276,7 @@ links("bl", BROKERS); links("pl", PROPS);
 function render() {
   var act = items.filter(function (i) { return i.s !== "Done"; }).length;
   $("nA").textContent = act; $("nE").textContent = items.filter(function (i) { return i.s === "Entered"; }).length; $("nT").textContent = items.length;
+  $("cA").textContent = act; $("cA").style.display = act ? "" : "none";
   var tabs = ["Active"].concat(STATUS).concat(["All"]);
   function ok(i, t) { return t === "All" || (t === "Active" ? i.s !== "Done" : i.s === t); }
   $("tabs").innerHTML = tabs.map(function (t) { return '<button class="' + (t === filter ? "on" : "") + '" data-t="' + t + '">' + t + " (" + items.filter(function (i) { return ok(i, t); }).length + ")</button>"; }).join("");
@@ -237,6 +307,7 @@ $("add").onclick = async function () {
   try {
     await addDoc(col, { p: p, b: $("bias").value, htf: tfVal("htf"), htfn: $("htfn").value.trim(), ltf: tfVal("ltf"), ltfn: $("ltfn").value.trim(), poi: $("poi").value.trim(), c: $("note").value.trim(), s: "Waiting", createdAt: serverTimestamp() });
     ["pair", "htfn", "ltfn", "poi", "note", "htfc", "ltfc"].forEach(function (x) { $(x).value = ""; });
+    filter = "Active"; go("setuplist");
   } catch (e) { $("err").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("add").disabled = false;
 };
@@ -252,7 +323,7 @@ $("list").onclick = async function (e) {
       go("journal");
     }
     else if (a === "del" && confirm("Delete " + it.p + "?")) await deleteDoc(ref);
-  } catch (err) { $("err").textContent = friendlyError(err.code); }
+  } catch (err) { alert(friendlyError(err.code)); }
 };
 
 /* journal */
@@ -294,6 +365,7 @@ $("jadd").onclick = async function () {
   try {
     await addDoc(jcol, { p: p, d: $("jd").value, r: res, rs: res === "Win" ? m : res === "Loss" ? -m : 0, pl: isNaN(pl) ? null : res === "Win" ? Math.abs(pl) : res === "Loss" ? -Math.abs(pl) : pl, dt: $("jdt").value || today(), em: $("jem").value, fp: $("jfp").value, n: $("jn").value.trim(), createdAt: serverTimestamp() });
     ["jp", "jrr", "jpl", "jn"].forEach(function (x) { $(x).value = ""; });
+    jf = "All"; go("history");
   } catch (e) { $("jerr").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("jadd").disabled = false;
 };
@@ -336,13 +408,14 @@ document.querySelectorAll(".ei").forEach(function (e) { e.oninput = expc; });
 $("out").onclick = function () { signOut(auth).then(function () { location.replace("login.html"); }); };
 $("pnb").onclick = async function () {
   var v = $("pn").value.trim(); if (!v) return;
-  try { await updateProfile(user, { displayName: v }); await setDoc(doc(db, "users", user.uid), { name: v }, { merge: true }); $("hi").textContent = "Welcome, " + v.split(" ")[0]; $("pmsg").textContent = "Name saved."; } catch (e) { $("pmsg").textContent = friendlyError(e.code); }
+  try { await updateProfile(user, { displayName: v }); await setDoc(doc(db, "users", user.uid), { name: v }, { merge: true }); $("hi").textContent = "Welcome, " + v.split(" ")[0]; $("dn").textContent = v; $("dav").textContent = v.charAt(0).toUpperCase(); $("pmsg").textContent = "Name saved."; } catch (e) { $("pmsg").textContent = friendlyError(e.code); }
 };
 $("pr").onclick = async function () { try { await sendPasswordResetEmail(auth, user.email); $("pmsg").textContent = "Reset link sent to " + user.email + "."; } catch (e) { $("pmsg").textContent = friendlyError(e.code); } };
 
 onAuthStateChanged(auth, function (u) {
   if (!u) { location.replace("login.html"); return; }
   user = u; $("hi").textContent = "Welcome, " + (u.displayName ? u.displayName.split(" ")[0] : "trader");
+  $("dn").textContent = u.displayName || "Trader"; $("de").textContent = u.email || ""; $("dav").textContent = (u.displayName || u.email || "T").charAt(0).toUpperCase();
   $("pn").value = u.displayName || ""; $("pe").textContent = u.email; $("pm").textContent = u.metadata.creationTime ? new Date(u.metadata.creationTime).toLocaleDateString() : "-";
   col = collection(db, "users", u.uid, "setups");
   jcol = collection(db, "users", u.uid, "journal");
