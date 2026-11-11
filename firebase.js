@@ -30,7 +30,7 @@ export function friendlyError(code) {
     "auth/network-request-failed": "No internet connection. Check your network and retry.",
     "auth/unauthorized-domain": "This website address isn't authorised in Firebase yet.",
     "auth/operation-not-allowed": "Email login isn't switched on in Firebase yet.",
-    "permission-denied": "Your account was created, but saving your profile was blocked. Check the Firestore rules."
+    "permission-denied": "Saving was blocked by the database rules. Check that your Firestore rules are published."
   };
   return m[code] || "Something went wrong. Please try again.";
 }
