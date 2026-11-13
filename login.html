@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#060c09">
+<meta name="theme-color" content="#090909">
 <title>Log in | Trade Buddy</title>
 <style>
-:root{--brand:#22c55e;--brand2:#86efac;--bg:#060c09;--s1:#0c1511;--s2:#111e18;--line:rgba(255,255,255,.1);--ink:#f2f7f4;--mute:#93a79b;--bad:#f87171;
+:root{--brand:#FFC928;--brand2:#FFDD73;--bg:#090909;--s1:#111214;--s2:#17191C;--line:rgba(255,255,255,.1);--ink:#fff;--mute:#A1A1AA;--bad:#f87171;
 --head:"Segoe UI","Helvetica Neue",system-ui,sans-serif;box-sizing:border-box}
 *{box-sizing:border-box}
 html{background:var(--bg)}
@@ -14,38 +14,38 @@ body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(
 a{color:inherit;text-decoration:none}
 h1,p{margin:0}
 .glow{position:fixed;inset:0;pointer-events:none;z-index:0}
-.glow::before{content:"";position:absolute;left:50%;top:-240px;width:860px;height:600px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(34,197,94,.3),transparent)}
+.glow::before{content:"";position:absolute;left:50%;top:-240px;width:860px;height:600px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(255,201,40,.3),transparent)}
 .glow::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at top,#000 5%,transparent 65%);mask-image:radial-gradient(ellipse at top,#000 5%,transparent 65%);opacity:.45}
 .top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:18px 20px;max-width:1060px;width:100%;margin:0 auto}
 .logo{font-weight:800;font-size:19px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px}
-.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#15803d);display:grid;place-items:center}
+.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#E0A800);display:grid;place-items:center}
 .mark svg{width:16px;height:16px}
 .back{color:var(--mute);font-size:14.5px;font-weight:600}
 .back:hover{color:var(--ink)}
 main{position:relative;z-index:1;flex:1;display:grid;place-items:center;padding:10px 16px 40px}
-.card{width:100%;max-width:430px;border:1px solid var(--line);border-radius:26px;padding:30px 24px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 100px rgba(34,197,94,.1)}
+.card{width:100%;max-width:430px;border:1px solid var(--line);border-radius:26px;padding:30px 24px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 100px rgba(255,201,40,.1)}
 .card h1{font-size:28px;font-weight:800;letter-spacing:-.8px;line-height:1.15}
 .sub{color:var(--mute);margin:8px 0 22px}
 label{display:block;font-size:13.5px;font-weight:600;color:var(--mute);margin:14px 0 6px}
 .field{position:relative}
 input{width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:14px 16px;outline:none;transition:.15s}
 input::placeholder{color:#5d7066}
-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(255,201,40,.18)}
 .field input{padding-right:70px}
 .eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mute);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:8px}
 .eye:hover{color:var(--ink)}
-.btn{width:100%;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand);color:#03150a;font:inherit;font-weight:700;font-size:16px;border-radius:999px;padding:15px 24px;border:1px solid var(--brand);cursor:pointer;transition:.2s;box-shadow:0 8px 28px rgba(34,197,94,.28)}
+.btn{width:100%;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand);color:#161100;font:inherit;font-weight:700;font-size:16px;border-radius:999px;padding:15px 24px;border:1px solid var(--brand);cursor:pointer;transition:.2s;box-shadow:0 8px 28px rgba(255,201,40,.22)}
 .btn:hover:not(:disabled){background:var(--brand2);border-color:var(--brand2)}
 .btn:disabled{opacity:.6;cursor:wait}
 .msg{margin-top:16px;padding:12px 14px;border-radius:12px;font-size:14.5px;display:none}
 .msg.err{display:block;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.35);color:#fecaca}
-.msg.ok{display:block;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);color:var(--brand2)}
+.msg.ok{display:block;background:rgba(255,201,40,.1);border:1px solid rgba(255,201,40,.35);color:var(--brand2)}
 .alt{text-align:center;color:var(--mute);font-size:15px;margin-top:20px}
 .alt a{color:var(--brand2);font-weight:700}
 .row{display:flex;justify-content:flex-end;margin-top:10px}
 .link{background:none;border:0;color:var(--brand2);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0}
 .hint{font-size:12.5px;color:var(--mute);margin-top:6px}
-.spin{width:16px;height:16px;border:2.5px solid rgba(3,21,10,.3);border-top-color:#03150a;border-radius:50%;animation:s .7s linear infinite;display:none}
+.spin{width:16px;height:16px;border:2.5px solid rgba(3,21,10,.3);border-top-color:#161100;border-radius:50%;animation:s .7s linear infinite;display:none}
 .btn:disabled .spin{display:inline-block}
 @keyframes s{to{transform:rotate(360deg)}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--brand2);outline-offset:3px}
@@ -55,13 +55,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--brand2);outline-off
 <body>
 <div class="glow"></div>
 <div class="top">
-  <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#03150a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
+  <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
   <a class="back" href="index.html">Back to home</a>
 </div>
 <main>
   <div class="card">
-    <h1>Welcome back</h1>
-    <p class="sub">Log in to see your setups and journal.</p>
+    <h1>Welcome Back.</h1>
+    <p class="sub">Your trading journey continues here. Sign in to access your trading workspace.</p>
     <form id="f" novalidate>
       <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
