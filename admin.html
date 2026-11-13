@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#111318">
+<title>Admin | Trade Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--y:#F5C542;--y2:#FFD866;--bg:#111318;--s1:#1C2028;--s2:#242A34;--line:rgba(255,255,255,.09);--ink:#fff;--mute:#9AA1AD;--pos:#22c55e;--pos2:#4ade80;--bad:#f87171;--amb:#fb923c;--blue:#60a5fa;--nav:64px;--f:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;--serif:"Fraunces",Georgia,serif;box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f);-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px)}
+body.so{overflow:hidden}
+a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit}
+.hide{display:none!important}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px calc(var(--nav) + env(safe-area-inset-bottom,0px) + 28px)}
+.top{display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:30;background:var(--bg)}
+.logo{font-weight:800;font-size:18px;display:flex;align-items:center;gap:9px}
+.mark{width:28px;height:28px;border-radius:9px;background:var(--y);display:grid;place-items:center;flex:none}
+.mark svg{width:16px;height:16px}
+.adm{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--y);border:1px solid rgba(245,197,66,.4);border-radius:999px;padding:2px 8px}
+.iconb{width:38px;height:38px;border-radius:12px;background:var(--s1);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;padding:0}
+.iconb svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.iconb.spin svg{animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* gate */
+.gate{min-height:100dvh;display:grid;place-items:center;padding:20px}
+.gcard{width:100%;max-width:400px;border:1px solid var(--line);border-radius:24px;padding:26px 22px;background:var(--s1);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.gcard h1{font-family:var(--serif);font-size:26px;font-weight:600;margin:16px 0 4px}
+.gcard .sub{color:var(--mute);font-size:14px;margin-bottom:14px}
+
+/* nav */
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#161920;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bnav .in{display:flex;max-width:720px;margin:0 auto;height:var(--nav);padding:0 6px}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--mute);font-size:11px;font-weight:600;position:relative;min-width:0}
+.bnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bnav a.on{color:var(--y)}
+.bnav a.on::before{content:"";position:absolute;top:0;left:30%;right:30%;height:2px;border-radius:0 0 3px 3px;background:var(--y)}
+@media (min-width:1024px){
+ .bnav{top:0;right:auto;width:96px;border-top:0;border-right:1px solid var(--line);padding-top:24px}
+ .bnav .in{flex-direction:column;height:auto;gap:6px;padding:0 8px}
+ .bnav a{flex:none;height:64px;border-radius:14px}
+ .bnav a.on{background:rgba(245,197,66,.1)}.bnav a.on::before{display:none}
+ .wrap{margin:0 auto 0 120px;max-width:820px;padding-bottom:60px}
+}
+.phr{display:flex;align-items:center;gap:8px;margin:4px 0 4px}
+.ph{font-family:var(--serif);font-size:clamp(26px,6vw,34px);font-weight:600;letter-spacing:-.02em}
+.back{width:38px;height:38px;border-radius:12px;background:var(--s1);border:1px solid var(--line);display:none;place-items:center;cursor:pointer;padding:0;flex:none}
+.back svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.back.on{display:grid}
+.psub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.view{display:none}.view.on{display:block}
+
+/* shared */
+.card{border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--s1);margin-bottom:14px}
+.card.flush{padding:0;overflow:hidden}
+.card h2{font-size:17px;font-weight:700;margin-bottom:12px}
+.card .sub{color:var(--mute);font-size:13.5px;margin:-6px 0 12px}
+.rowh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 6px}
+.rowh h2{margin:0;font-size:17px;font-weight:700}
+.lnk{background:none;border:0;color:var(--y);font-size:14px;font-weight:700;cursor:pointer;padding:4px 0}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--y);text-transform:uppercase}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin:0 0 4px}
+input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;outline:none;min-width:0;margin-bottom:10px}
+select option{background:#1C2028}textarea{resize:vertical;min-height:90px}
+input:focus,select:focus,textarea:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(245,197,66,.16)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--y);color:#161100;font-weight:700;border-radius:999px;padding:13px 18px;border:1px solid var(--y);cursor:pointer}
+.btn:hover{background:var(--y2)}
+.btn.o{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.o:hover{border-color:var(--y);color:var(--y)}
+.btn.dng{background:transparent;color:var(--bad);border-color:rgba(248,113,113,.4)}
+.btn.sm{width:auto;padding:8px 14px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:wait}
+.up{color:var(--pos2)}.dn{color:var(--bad)}.ne{color:var(--mute)}
+.note{color:var(--mute);font-size:13px;margin-top:8px}
+.err{color:#fecaca;font-size:14px;margin-top:8px}.err:empty{display:none}
+.okm{color:var(--pos2);font-size:14px;margin-top:8px}.okm:empty{display:none}
+.empty{text-align:center;color:var(--mute);padding:22px 16px;font-size:14px}
+.ban{border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.08);border-radius:14px;padding:12px 14px;margin:2px 0 14px;font-size:14px;color:#fecaca}
+.warn{border:1px solid rgba(245,197,66,.4);background:rgba(245,197,66,.08);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:13.5px;color:#f5e6b8}
+.na{border:1px dashed var(--line);border-radius:14px;padding:14px;color:var(--mute);font-size:14px}
+.na b{color:var(--ink)}
+
+.strip{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:12px;border:1px solid var(--line);border-radius:16px;background:var(--s1);overflow:hidden}
+.strip div{padding:11px 8px;text-align:center;border-left:1px solid var(--line);min-width:0}
+.strip div:first-child{border-left:0}
+.strip b{display:block;font-size:18px;font-weight:700;white-space:nowrap}
+.strip span{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.tile{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:14px}
+.tile.big{grid-column:span 2}
+.tile small{display:block;color:var(--mute);font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+.tile b{display:block;font-size:24px;font-weight:700;margin-top:2px}
+.tile.big b{font-size:34px}
+.tile p{color:var(--mute);font-size:12.5px;margin-top:2px}
+.hero{margin:4px 0 14px}
+.hero h1{font-family:var(--serif);font-size:clamp(28px,6.5vw,36px);font-weight:600;letter-spacing:-.02em}
+.hero p{color:var(--mute);font-size:14px;margin-top:2px}
+
+.row{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:10px 16px;background:none;border:0;border-top:1px solid var(--line);text-align:left;cursor:pointer}
+.row:first-child{border-top:0}
+.row:hover,.row:active{background:rgba(255,255,255,.03)}
+.rl{flex:1;min-width:0}
+.rt{display:flex;align-items:center;gap:8px}
+.rt b{font-size:15.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rl small{display:block;color:var(--mute);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv{font-weight:700;font-size:15px;white-space:nowrap;text-align:right;min-width:60px}
+.rv small{display:block;font-weight:600;color:var(--mute);font-size:12px}
+.chev{width:16px;height:16px;stroke:var(--mute);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dtag{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:2px 7px;flex:none}
+.dtag.buy{background:rgba(34,197,94,.14);color:var(--pos2)}.dtag.sell{background:rgba(248,113,113,.14);color:var(--bad)}
+.dtag.mut{background:rgba(255,255,255,.08);color:var(--mute)}
+.sp{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.sp.act{background:rgba(34,197,94,.14);color:var(--pos2)}
+.sp.poi{background:rgba(245,197,66,.14);color:var(--y2)}
+.sp.ent{background:rgba(96,165,250,.16);color:#93c5fd}
+.sp.don{background:rgba(255,255,255,.08);color:var(--mute)}
+.sp.Win{background:rgba(34,197,94,.14);color:var(--pos2)}.sp.Loss{background:rgba(248,113,113,.14);color:var(--bad)}.sp.BE{background:rgba(255,255,255,.08);color:var(--mute)}
+.more{padding:12px 16px}
+
+/* filters */
+.srch{position:relative}
+.srch input{padding-left:40px;margin-bottom:0}
+.srch svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2;stroke-linecap:round}
+.frow{display:flex;gap:8px;margin-top:10px}
+.frow select{margin:0;padding:9px 12px;font-size:14px;flex:1}
+.pcount{color:var(--mute);font-size:12.5px;margin:10px 2px 0}
+
+/* charts */
+.chart{display:flex;align-items:stretch;gap:6px;height:150px}
+.cb{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.cb .cv{font-size:10.5px;color:var(--mute);height:14px}
+.cb .bar{flex:1;width:100%;display:flex;align-items:flex-end}
+.cb .bar i{display:block;width:100%;min-height:2px;border-radius:4px 4px 0 0}
+.cb .cl{font-size:9.5px;color:var(--mute);margin-top:4px;white-space:nowrap}
+.stack{display:flex;height:14px;border-radius:999px;overflow:hidden;background:var(--s2);margin:6px 0 10px}
+.stack i{display:block;height:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.leg b{color:var(--ink)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.hb{display:grid;grid-template-columns:96px 1fr 34px;align-items:center;gap:10px;padding:6px 0;font-size:13.5px}
+.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb div{height:10px;border-radius:999px;background:var(--s2);overflow:hidden}
+.hb div i{display:block;height:100%;border-radius:999px}
+.hb b{text-align:right}
+.pf div{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.pf div:first-child{border-top:0}
+.pf span{color:var(--mute)}
+
+/* menu */
+.mrow{display:flex;align-items:center;gap:14px;padding:14px 16px;border-top:1px solid var(--line)}
+.mrow:first-child{border-top:0}
+.mrow:active{background:rgba(255,255,255,.03)}
+.mic{width:40px;height:40px;border-radius:12px;background:rgba(245,197,66,.12);display:grid;place-items:center;flex:none}
+.mic svg{width:20px;height:20px;stroke:var(--y);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mrow b{display:block;font-size:15.5px}.mrow small{color:var(--mute);font-size:13px}
+.mrow .grow{flex:1;min-width:0}
+
+/* announcements */
+.an{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:var(--s2)}
+.an b{display:block;font-size:15.5px}
+.an p{color:#d4d4d8;font-size:14px;margin:4px 0 8px;white-space:pre-wrap;word-break:break-word}
+.an small{color:var(--mute);font-size:12px}
+.an .ar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.62);opacity:0;pointer-events:none;transition:opacity .22s;z-index:60}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:640px;margin:0 auto;max-height:90dvh;display:flex;flex-direction:column;background:var(--s1);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;transform:translateY(100%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility .28s}
+body.so .scrim{opacity:1;pointer-events:auto}
+body.so .sheet{transform:none;visibility:visible}
+.grab{width:40px;height:4px;border-radius:4px;background:rgba(255,255,255,.18);margin:8px auto 0}
+.sh-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px 12px;border-bottom:1px solid var(--line)}
+.sh-h h3{font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.15;word-break:break-word}
+.sh-x{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--s2);color:var(--mute);display:grid;place-items:center;cursor:pointer;padding:0;flex:none}
+.sh-x svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+.sh-b{overflow-y:auto;overscroll-behavior:contain;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.shs{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--y);margin:18px 0 2px}
+.shs:first-child{margin-top:0}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.kv span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);padding-top:2px}
+.kv p{font-size:14.5px;color:#e4e4e7;word-break:break-word}
+@media (min-width:700px){
+ .sheet{top:50%;bottom:auto;left:50%;right:auto;width:min(520px,92vw);margin:0;max-height:84vh;border:1px solid var(--line);border-radius:22px;transform:translate(-50%,-46%);opacity:0;transition:transform .22s,opacity .22s,visibility .22s}
+ body.so .sheet{transform:translate(-50%,-50%);opacity:1}
+ .grab{display:none}
+}
+button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}.iconb.spin svg{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- ACCESS GATE: nothing below #app is loaded until the signed-in user is confirmed as an admin -->
+<div class="gate" id="gate">
+  <div class="gcard">
+    <div class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy <span class="adm">Admin</span></div>
+    <div id="g-load"><h1>Checking access...</h1><p class="sub">One moment.</p></div>
+    <form id="g-login" class="hide" novalidate>
+      <h1>Admin sign in</h1><p class="sub">Use your administrator account.</p>
+      <label for="ge">Email</label><input id="ge" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com">
+      <label for="gp">Password</label><input id="gp" type="password" autocomplete="current-password" placeholder="Your password">
+      <button class="btn" id="gb" type="submit">Sign in</button>
+    </form>
+    <div id="g-deny" class="hide">
+      <h1>Access denied</h1><p class="sub" id="g-dm">This account is not an administrator.</p>
+      <button class="btn o" id="g-out" type="button">Log out</button>
+      <a class="btn o" href="dashboard.html" style="margin-top:8px">Go to my dashboard</a>
+    </div>
+    <div class="err" id="g-err"></div>
+  </div>
+</div>
+
+<div id="app" class="hide">
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
+  <div class="grab"></div>
+  <div class="sh-h"><div><div class="eyebrow" id="shE"></div><h3 id="shT"></h3></div><button class="sh-x" data-sh="close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="sh-b" id="shB"></div>
+</div>
+
+<nav class="bnav" aria-label="Main">
+  <div class="in">
+    <a href="#overview" data-n="overview"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Overview</a>
+    <a href="#users" data-n="users"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 010 8M22 21c0-3-2-5-4-5.6"/></svg>Users</a>
+    <a href="#trades" data-n="trades"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Trades</a>
+    <a href="#setups" data-n="setups"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Setups</a>
+    <a href="#menu" data-n="menu"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>Menu</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="top"><div class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy <span class="adm">Admin</span></div>
+    <button class="iconb" id="refresh" aria-label="Refresh data"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></svg></button></div>
+  <div class="ban hide" id="ban"></div>
+  <div class="warn hide" id="capw"></div>
+
+  <div class="phr hide" id="phr"><button class="back" id="pback" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h1 class="ph" id="pt"></h1></div>
+
+  <!-- OVERVIEW -->
+  <div class="view on" id="v-overview">
+    <div class="hero"><div class="eyebrow">Control centre</div><h1>Overview</h1><p id="ovs">Loading real data from Firebase...</p></div>
+    <div class="tiles" id="oTiles"></div>
+    <div class="card"><h2>New users per week</h2><p class="sub">Last 8 weeks, from account creation dates.</p><div id="oChart"></div></div>
+    <div class="card"><h2>Subscriptions &amp; revenue</h2><div class="na"><b>Not available.</b> Trade Buddy has no subscription or payment data yet, so nothing is shown here instead of made-up numbers. See Menu &gt; Revenue.</div></div>
+    <div class="card flush"><div class="rowh"><h2>Recent registrations</h2><button class="lnk" data-go="users">View all</button></div><div id="oReg"></div></div>
+    <div class="card flush"><div class="rowh"><h2>Recent activity</h2></div><div id="oAct"></div></div>
+  </div>
+
+  <!-- USERS -->
+  <div class="view" id="v-users">
+    <div class="strip"><div><b id="uN">0</b><span>Users</span></div><div><b id="uA">0</b><span>Active</span></div><div><b id="uI">0</b><span>Inactive</span></div></div>
+    <div class="card">
+      <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="uq" placeholder="Search name or email" autocomplete="off" aria-label="Search users"></div>
+      <div class="frow"><select id="uf" aria-label="Filter"><option value="all">All users</option><option value="new7">New (7 days)</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="none">No activity yet</option></select>
+      <select id="us" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="trades">Most trades</option><option value="act">Recent activity</option></select></div>
+      <div class="pcount" id="ucount"></div>
+    </div>
+    <div class="card flush"><div id="uList"></div><div class="more hide" id="uMore"><button class="btn o" id="uMoreB">Show more</button></div></div>
+    <p class="note">Active = recorded a trade or setup within the activity window in Settings. Firebase does not store a last-login time, so activity is based on recorded trades and setups.</p>
+  </div>
+
+  <!-- TRADES -->
+  <div class="view" id="v-trades">
+    <div class="strip"><div><b id="tT">0</b><span>Trades</span></div><div><b id="tW">-</b><span>Win rate</span></div><div><b id="tF">-</b><span>Plan followed</span></div></div>
+    <div class="card"><h2>Win / loss distribution</h2><div id="tDist"></div></div>
+    <div class="card"><h2>Trades per week</h2><div id="tChart"></div></div>
+    <div class="card"><h2>Top instruments</h2><div id="tInst"></div></div>
+    <div class="card"><h2>Most active users</h2><div id="tUsers"></div></div>
+    <div class="card"><h2>Feelings on losing trades</h2><p class="sub">Most common mood recorded on losses.</p><div id="tEmo"></div></div>
+    <div class="card flush"><div class="rowh"><h2>Recent trades</h2></div><div id="tList"></div><div class="more hide" id="tMore"><button class="btn o" id="tMoreB">Show more</button></div></div>
+    <p class="note">Only results are shown here. Trade notes and dollar amounts stay private to each user.</p>
+  </div>
+
+  <!-- SETUPS -->
+  <div class="view" id="v-setups">
+    <div class="strip"><div><b id="sA">0</b><span>Active</span></div><div><b id="sE">0</b><span>Entered</span></div><div><b id="sD">0</b><span>Completed</span></div></div>
+    <div class="card"><h2>Setups by status</h2><div id="sDist"></div></div>
+    <div class="card"><h2>Setups per week</h2><div id="sChart"></div></div>
+    <div class="card"><h2>Top instruments</h2><div id="sInst"></div></div>
+    <div class="card flush"><div class="rowh"><h2>Recent setups</h2></div><div id="sList"></div><div class="more hide" id="sMore"><button class="btn o" id="sMoreB">Show more</button></div></div>
+  </div>
+
+  <!-- MENU -->
+  <div class="view" id="v-menu">
+    <div class="card flush">
+      <a class="mrow" href="#revenue"><span class="mic"><svg viewBox="0 0 24 24"><path d="M12 3v18M16 7.5C16 6 14.2 5 12 5S8 6 8 7.7c0 4 8 2.3 8 6.6C16 16 14.2 17 12 17s-4-1-4-2.5"/></svg></span><span class="grow"><b>Revenue &amp; subscriptions</b><small>Not connected yet</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
+      <a class="mrow" href="#reports"><span class="mic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><span class="grow"><b>Reports &amp; analytics</b><small>Growth, engagement, usage</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
+      <a class="mrow" href="#announce"><span class="mic"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 004 0"/></svg></span><span class="grow"><b>Announcements</b><small>Send a message to all users</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
+      <a class="mrow" href="#settings"><span class="mic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span><span class="grow"><b>Settings</b><small>Admin account and preferences</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
+    </div>
+  </div>
+
+  <!-- REVENUE -->
+  <div class="view" id="v-revenue">
+    <div class="card"><h2>Nothing to report yet</h2>
+      <div class="na"><b>No payment or subscription data exists.</b> Your current Firebase project stores users, trades, setups and notifications only. A user's account is not treated as a payment, and no revenue numbers are shown.</div>
+      <p class="note" style="margin-top:12px">To enable this section later you will need:</p>
+      <div class="pf" style="margin-top:6px">
+        <div><span>1</span><b style="text-align:right">A payment provider (e.g. Paystack, Flutterwave, Stripe)</b></div>
+        <div><span>2</span><b style="text-align:right">A trusted backend (Cloud Function) to confirm payments</b></div>
+        <div><span>3</span><b style="text-align:right">A write-only-by-backend "subscriptions" collection</b></div>
+      </div>
+      <p class="note">Once that exists, this page can show subscribers, free vs paid, expired plans and revenue trends.</p>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="view" id="v-reports">
+    <div class="card"><h2>New users per week</h2><div id="rUsers"></div></div>
+    <div class="card"><h2>Active users per week</h2><p class="sub">Users who recorded a trade or setup that week.</p><div id="rActive"></div></div>
+    <div class="card"><h2>Trades recorded per week</h2><div id="rTrades"></div></div>
+    <div class="card"><h2>Setups created per week</h2><div id="rSetups"></div></div>
+    <div class="card"><h2>Engagement</h2><div class="pf" id="rEng"></div></div>
+    <div class="card"><h2>Subscription &amp; revenue trends</h2><div class="na">Not available until payment data exists.</div></div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="view" id="v-announce">
+    <div class="card"><h2 id="aFormT">New announcement</h2>
+      <p class="sub">Publishing sends a notification to every user. It appears in their Menu &gt; Notifications.</p>
+      <label for="at">Title</label><input id="at" maxlength="120" placeholder="e.g. New calculators added">
+      <label for="am">Message</label><textarea id="am" maxlength="800" placeholder="Write your message"></textarea>
+      <button class="btn" id="aPub" type="button">Publish to all users</button>
+      <button class="btn o" id="aDraft" type="button" style="margin-top:8px">Save as draft</button>
+      <button class="btn o hide" id="aCancel" type="button" style="margin-top:8px">Cancel editing</button>
+      <div class="err" id="aErr"></div><div class="okm" id="aOk"></div>
+      <p class="note">Users who sign up after you publish will not receive it.</p>
+    </div>
+    <div id="aList"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="view" id="v-settings">
+    <div class="card"><h2>Admin account</h2>
+      <div class="pf"><div><span>Email</span><b id="seE"></b></div><div><span>User ID</span><b id="seU" style="font-size:12px;word-break:break-all;text-align:right"></b></div><div><span>Data loaded</span><b id="seL"></b></div></div>
+      <p class="note">Admins are managed in the Firebase Console (Firestore &gt; admins collection). They cannot be added from this page, on purpose.</p>
+    </div>
+    <div class="card"><h2>Preferences</h2><p class="sub">Saved on this device only.</p>
+      <label for="sth">Activity window (days)</label><input id="sth" inputmode="numeric">
+      <label for="slim">Max records to load per collection</label><input id="slim" inputmode="numeric">
+      <button class="btn" id="ssave" type="button">Save preferences</button>
+      <div class="okm" id="sok"></div><div class="err" id="serr"></div>
+      <p class="note">Each load reads every user, trade and setup. Firebase's free plan allows about 50,000 reads per day, so avoid refreshing very often once you have many users.</p>
+    </div>
+    <div class="card"><h2>Session</h2>
+      <a class="btn o" href="dashboard.html" style="margin-bottom:8px">Open user dashboard</a>
+      <button class="btn dng" id="sout" type="button">Log out</button></div>
+  </div>
+</div>
+</div>
+
+<script type="module">
+import { auth, db, friendlyError } from "./firebase.js";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import { collection, collectionGroup, getDocs, getDoc, doc, query, limit, orderBy, addDoc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+var $ = function (i) { return document.getElementById(i); };
+var DAY = 864e5, PER = 20;
+var CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+var SCLS = {"Waiting":"act","At POI":"poi","Entered":"ent","Done":"don"};
+var SLAB = {"Waiting":"Active","At POI":"At entry zone","Entered":"Entered","Done":"Completed"};
+
+/* ---------- state ---------- */
+var S = { th: 30, lim: 5000 };
+try { var sv = JSON.parse(localStorage.getItem("tbAdmin") || "{}"); if (sv.th > 0) S.th = sv.th; if (sv.lim > 0) S.lim = sv.lim; } catch (e) {}
+function saveS() { try { localStorage.setItem("tbAdmin", JSON.stringify(S)); } catch (e) {} }
+var me = null, U = {}, TR = [], SE = [], ANN = [], annErr = "";
+var loaded = false, capped = false, loadedAt = 0, started = false, loading = false;
+var ulim = PER, tlim = PER, slim = PER, editA = null, SH = null;
+
+/* ---------- helpers ---------- */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function ms(ts) { return ts && ts.toMillis ? ts.toMillis() : 0; }
+function fmtD(t) { return t ? new Date(t).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}) : "-"; }
+function ago(t) {
+  if (!t) return "never";
+  var m = Math.floor((Date.now() - t) / 6e4);
+  if (m < 1) return "just now"; if (m < 60) return m + "m ago";
+  var h = Math.floor(m / 60); if (h < 24) return h + "h ago";
+  var d = Math.floor(h / 24); return d < 30 ? d + "d ago" : fmtD(t);
+}
+function cnt(a, f) { return a.filter(f).length; }
+function by(a, k) { return a.filter(function (i) { return i.r === k; }); }
+function uname(u) { return u ? (u.name || u.email || "Unnamed user") : "Unknown user"; }
+function ulist() { return Object.keys(U).map(function (k) { return U[k]; }); }
+function pct(a, b) { return b ? Math.round(a / b * 100) + "%" : "-"; }
+function tile(l, v, p, c, big) { return '<div class="tile' + (big ? " big" : "") + '"><small>' + l + '</small><b class="' + (c || "") + '">' + v + '</b>' + (p ? "<p>" + p + "</p>" : "") + "</div>"; }
+function kv(k, v) { return v || v === 0 ? '<div class="kv"><span>' + k + '</span><p>' + esc(v) + '</p></div>' : ""; }
+function row(open, id, title, sub, right, tag) {
+  return '<button class="row" type="button" data-open="' + open + '" data-id="' + esc(id) + '"><span class="rl"><span class="rt"><b>' + esc(title) + '</b>' + (tag || "") + '</span><small>' + sub + '</small></span>' + (right || "") + CHEV + '</button>';
+}
+function dtag(buy) { return '<i class="dtag ' + (buy ? "buy" : "sell") + '">' + (buy ? "BUY" : "SELL") + '</i>'; }
+function topN(arr, kf, n) {
+  var m = {}; arr.forEach(function (x) { var k = kf(x); if (k) m[k] = (m[k] || 0) + 1; });
+  return Object.keys(m).map(function (k) { return [k, m[k]]; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, n);
+}
+function bars(list, total, color) {
+  if (!list.length) return '<div class="empty">No data yet.</div>';
+  return list.map(function (p) { return '<div class="hb"><span>' + esc(p[0]) + '</span><div><i style="width:' + Math.max(3, Math.round(p[1] / Math.max(total, 1) * 100)) + '%;background:' + color + '"></i></div><b>' + p[1] + '</b></div>'; }).join("");
+}
+function weeks(n) { var end = Date.now(), a = []; for (var i = n - 1; i >= 0; i--) a.push({ s: end - (i + 1) * 7 * DAY, e: end - i * 7 * DAY }); return a; }
+function wlabels(n) { return weeks(n).map(function (b) { return new Date(b.e).toLocaleDateString("en-US", {month:"short", day:"numeric"}); }); }
+function series(items, key, n) { return weeks(n).map(function (b) { return cnt(items, function (x) { return x[key] > b.s && x[key] <= b.e; }); }); }
+function chart(vals, labels, color) {
+  var max = Math.max.apply(null, vals.concat([1]));
+  return '<div class="chart">' + vals.map(function (v, i) { return '<div class="cb"><span class="cv">' + v + '</span><div class="bar"><i style="height:' + Math.round(v / max * 100) + '%;background:' + color + '"></i></div><span class="cl">' + labels[i] + '</span></div>'; }).join("") + "</div>";
+}
+function stackBar(parts) {
+  var tot = parts.reduce(function (s, p) { return s + p.v; }, 0);
+  if (!tot) return '<div class="empty">No data yet.</div>';
+  return '<div class="stack">' + parts.map(function (p) { return p.v ? '<i style="width:' + (p.v / tot * 100) + '%;background:' + p.c + '"></i>' : ""; }).join("") + '</div><div class="leg">' +
+    parts.map(function (p) { return '<span><span class="dot" style="background:' + p.c + '"></span>' + p.l + ' <b>' + p.v + '</b> (' + Math.round(p.v / tot * 100) + '%)</span>'; }).join("") + "</div>";
+}
+function status(u) {
+  if (!u.last) return "No activity yet";
+  return Date.now() - u.last < S.th * DAY ? "Active" : "Inactive";
+}
+
+/* ---------- gate ---------- */
+function gate(mode, msg) {
+  $("gate").classList.remove("hide"); $("app").classList.add("hide");
+  $("g-load").classList.toggle("hide", mode !== "load");
+  $("g-login").classList.toggle("hide", mode !== "login");
+  $("g-deny").classList.toggle("hide", mode !== "deny");
+  $("g-err").textContent = mode === "login" ? (msg || "") : "";
+  if (mode === "deny" && msg) $("g-dm").textContent = msg;
+}
+$("g-login").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  var em = $("ge").value.trim(), pw = $("gp").value;
+  if (!em || !pw) { $("g-err").textContent = "Enter your email and password."; return; }
+  $("gb").disabled = true; $("g-err").textContent = "";
+  try { await signInWithEmailAndPassword(auth, em, pw); }
+  catch (err) { $("g-err").textContent = friendlyError(err.code); }
+  $("gb").disabled = false;
+});
+$("g-out").onclick = function () { signOut(auth); };
+$("sout").onclick = function () { signOut(auth); };
+
+onAuthStateChanged(auth, async function (u) {
+  if (!u) { me = null; started = false; loaded = false; U = {}; TR = []; SE = []; ANN = []; closeSheet(); gate("login"); return; }
+  gate("load");
+  try {
+    var s = await getDoc(doc(db, "admins", u.uid));
+    if (!s.exists()) { me = null; gate("deny", "This account (" + (u.email || "unknown") + ") is not an administrator."); return; }
+    me = u; start();
+  } catch (e) {
+    gate("deny", "Could not verify admin access. " + (e.code === "permission-denied" ? "The admin Firestore rules have not been published yet." : friendlyError(e.code)));
+  }
+});
+
+/* ---------- routing ---------- */
+var NAVMAP = {overview:"overview",users:"users",trades:"trades",setups:"setups",menu:"menu",revenue:"menu",reports:"menu",announce:"menu",settings:"menu"};
+var BACK = {revenue:"menu",reports:"menu",announce:"menu",settings:"menu"};
+var TITLES = {users:"Users",trades:"Trades",setups:"Setups",menu:"Menu",revenue:"Revenue",reports:"Reports",announce:"Announcements",settings:"Settings"};
+function show(v) {
+  closeSheet();
+  document.querySelectorAll(".view").forEach(function (e) { e.classList.toggle("on", e.id === "v-" + v); });
+  document.querySelectorAll(".bnav a").forEach(function (a) { a.classList.toggle("on", a.dataset.n === NAVMAP[v]); });
+  $("phr").classList.toggle("hide", v === "overview");
+  $("pt").textContent = TITLES[v] || "";
+  $("pback").classList.toggle("on", !!BACK[v]); $("pback").setAttribute("data-go", BACK[v] || "overview");
+  document.title = (TITLES[v] || "Overview") + " | Trade Buddy Admin"; window.scrollTo(0, 0);
+}
+function go(v) { if (location.hash === "#" + v) show(v); else location.hash = v; }
+function route() { var h = location.hash.slice(1); show($("v-" + h) ? h : "overview"); }
+window.addEventListener("hashchange", function () { if (started) route(); });
+document.addEventListener("click", function (e) { var b = e.target.closest("[data-go]"); if (b) go(b.getAttribute("data-go")); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
+
+function start() {
+  $("gate").classList.add("hide"); $("app").classList.remove("hide");
+  started = true; route(); renderAll(); loadAll();
+}
+
+/* ---------- data ---------- */
+function build(us, js, ss) {
+  U = {}; TR = []; SE = [];
+  function ens(id) { return U[id] || (U[id] = { id: id, name: "", email: "", created: 0, profile: false, trades: [], setups: [], last: 0 }); }
+  us.forEach(function (d) { var x = d.data(); U[d.id] = { id: d.id, name: x.name || "", email: x.email || "", created: ms(x.createdAt), profile: true, trades: [], setups: [], last: 0 }; });
+  js.forEach(function (d) { var x = d.data(); x.id = d.id; x.uid = d.ref.parent.parent.id; x.at = ms(x.createdAt); ens(x.uid).trades.push(x); TR.push(x); });
+  ss.forEach(function (d) { var x = d.data(); x.id = d.id; x.uid = d.ref.parent.parent.id; x.at = ms(x.createdAt); ens(x.uid).setups.push(x); SE.push(x); });
+  Object.keys(U).forEach(function (k) { var u = U[k]; u.trades.concat(u.setups).forEach(function (x) { if (x.at > u.last) u.last = x.at; }); });
+}
+async function loadAll() {
+  if (loading) return; loading = true; $("refresh").classList.add("spin"); $("ban").classList.add("hide");
+  try {
+    var L = S.lim;
+    var r = await Promise.all([
+      getDocs(query(collection(db, "users"), limit(L))),
+      getDocs(query(collectionGroup(db, "journal"), limit(L))),
+      getDocs(query(collectionGroup(db, "setups"), limit(L)))
+    ]);
+    capped = r.some(function (s) { return s.size >= L; });
+    build(r[0].docs, r[1].docs, r[2].docs); loaded = true; loadedAt = Date.now();
+  } catch (e) {
+    $("ban").classList.remove("hide");
+    $("ban").textContent = "Could not load data (" + (e.code || e.message) + "). " + (e.code === "permission-denied" ? "Publish the admin Firestore rules first (see the setup guide)." : "Check your connection and tap refresh.");
+  }
+  try {
+    var a = await getDocs(query(collection(db, "announcements"), orderBy("createdAt", "desc")));
+    ANN = a.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; }); annErr = "";
+  } catch (e) { annErr = e.code === "permission-denied" ? "Announcements are blocked by the rules. Publish the admin rules." : friendlyError(e.code); }
+  loading = false; $("refresh").classList.remove("spin"); renderAll();
+}
+$("refresh").onclick = loadAll;
+
+/* ---------- renderers ---------- */
+function renderAll() {
+  $("capw").classList.toggle("hide", !(loaded && capped));
+  $("capw").textContent = "Your data reached the load limit of " + S.lim + " records per collection, so totals may be understated. Raise the limit in Settings.";
+  rOver(); rUsers(); rTrades(); rSetups(); rReports(); rAnn(); rSet();
+}
+function loadingMsg() { return '<div class="empty">' + (loading ? "Loading..." : "No data loaded.") + "</div>"; }
+function events(n) {
+  var a = []; TR.forEach(function (x) { a.push({ t: "trade", x: x, at: x.at }); }); SE.forEach(function (x) { a.push({ t: "setup", x: x, at: x.at }); });
+  a.sort(function (p, q) { return q.at - p.at; }); return a.slice(0, n);
+}
+function evRow(e) {
+  var x = e.x, u = U[x.uid], buy = e.t === "trade" ? x.d === "Long" : x.b === "Bullish";
+  var right = e.t === "trade" ? '<span class="sp ' + esc(x.r) + '">' + esc(x.r === "BE" ? "BE" : x.r) + '</span>' : '<span class="sp ' + (SCLS[x.s] || "don") + '">' + esc(SLAB[x.s] || x.s) + '</span>';
+  return row("u", x.uid, x.p || "-", esc(uname(u)) + " &middot; " + (e.t === "trade" ? "Trade" : "Setup") + " &middot; " + ago(e.at), right, dtag(buy));
+}
+
+function rOver() {
+  if (!loaded) { $("oTiles").innerHTML = ""; $("oReg").innerHTML = loadingMsg(); $("oAct").innerHTML = loadingMsg(); $("oChart").innerHTML = loadingMsg(); return; }
+  var us = ulist(), now = Date.now(), orph = cnt(us, function (u) { return !u.profile; });
+  var n7 = cnt(us, function (u) { return u.created && now - u.created < 7 * DAY; });
+  var n30 = cnt(us, function (u) { return u.created && now - u.created < 30 * DAY; });
+  var act = cnt(us, function (u) { return u.last && now - u.last < S.th * DAY; });
+  $("ovs").textContent = "Real data from Firebase. Loaded " + ago(loadedAt) + ".";
+  $("oTiles").innerHTML = tile("Registered users", us.length, orph ? orph + " with data but no profile document" : "Accounts with a profile document", "", true) +
+    tile("New (7 days)", n7) + tile("New (30 days)", n30) +
+    tile("Active users", act, "Recorded something in " + S.th + " days") + tile("Trades recorded", TR.length) + tile("Setups created", SE.length);
+  $("oChart").innerHTML = chart(series(us, "created", 8), wlabels(8), "#F5C542");
+  var reg = us.filter(function (u) { return u.created; }).sort(function (a, b) { return b.created - a.created; }).slice(0, 5);
+  $("oReg").innerHTML = reg.length ? reg.map(userRow).join("") : '<div class="empty">No registrations yet.</div>';
+  var ev = events(8);
+  $("oAct").innerHTML = ev.length ? ev.map(evRow).join("") : '<div class="empty">No trades or setups recorded yet.</div>';
+}
+
+function userRow(u) {
+  return row("u", u.id, uname(u), esc(u.email || "No email") + " &middot; Joined " + (u.created ? fmtD(u.created) : "unknown"),
+    '<span class="rv">' + u.trades.length + '<small>trades</small></span>', u.profile ? "" : '<i class="dtag mut">NO PROFILE</i>');
+}
+function rUsers() {
+  if (!loaded) { $("uList").innerHTML = loadingMsg(); return; }
+  var all = ulist(), now = Date.now();
+  $("uN").textContent = all.length;
+  $("uA").textContent = cnt(all, function (u) { return u.last && now - u.last < S.th * DAY; });
+  $("uI").textContent = cnt(all, function (u) { return u.last && now - u.last >= S.th * DAY; });
+  var q = $("uq").value.trim().toLowerCase(), f = $("uf").value, so = $("us").value;
+  var a = all.filter(function (u) {
+    if (q && (u.name + " " + u.email).toLowerCase().indexOf(q) < 0) return false;
+    if (f === "new7") return u.created && now - u.created < 7 * DAY;
+    if (f === "active") return u.last && now - u.last < S.th * DAY;
+    if (f === "inactive") return u.last && now - u.last >= S.th * DAY;
+    if (f === "none") return !u.last;
+    return true;
+  });
+  a.sort(function (x, y) {
+    if (so === "old") return (x.created || 1e15) - (y.created || 1e15);
+    if (so === "trades") return y.trades.length - x.trades.length;
+    if (so === "act") return y.last - x.last;
+    return y.created - x.created;
+  });
+  $("ucount").textContent = a.length + " user" + (a.length === 1 ? "" : "s");
+  $("uList").innerHTML = a.length ? a.slice(0, ulim).map(userRow).join("") : '<div class="empty">No users match.</div>';
+  $("uMore").classList.toggle("hide", a.length <= ulim);
+}
+$("uq").oninput = function () { ulim = PER; rUsers(); };
+$("uf").onchange = $("us").onchange = function () { ulim = PER; rUsers(); };
+$("uMoreB").onclick = function () { ulim += PER; rUsers(); };
+
+function rTrades() {
+  if (!loaded) { ["tDist","tChart","tInst","tUsers","tEmo","tList"].forEach(function (i) { $(i).innerHTML = loadingMsg(); }); return; }
+  var n = TR.length, w = by(TR, "Win"), l = by(TR, "Loss"), be = by(TR, "BE"), fp = cnt(TR, function (i) { return i.fp === "Yes"; });
+  $("tT").textContent = n; $("tW").textContent = pct(w.length, n); $("tF").textContent = pct(fp, n);
+  $("tDist").innerHTML = stackBar([{ l: "Wins", v: w.length, c: "#22c55e" }, { l: "Losses", v: l.length, c: "#f87171" }, { l: "Break-even", v: be.length, c: "#9AA1AD" }]);
+  $("tChart").innerHTML = chart(series(TR, "at", 8), wlabels(8), "#F5C542");
+  $("tInst").innerHTML = bars(topN(TR, function (x) { return x.p; }, 6), n, "#F5C542");
+  $("tUsers").innerHTML = bars(topN(TR, function (x) { return x.uid; }, 5).map(function (p) { return [uname(U[p[0]]), p[1]]; }), n, "#60a5fa");
+  $("tEmo").innerHTML = l.length ? bars(topN(l, function (x) { return x.em; }, 4), l.length, "#f87171") : '<div class="empty">No losing trades recorded yet.</div>';
+  var rec = TR.slice().sort(function (a, b) { return b.at - a.at; });
+  $("tList").innerHTML = rec.length ? rec.slice(0, tlim).map(function (x) {
+    var rs = x.rs || 0, rt = x.r === "BE" ? "BE" : (rs > 0 ? "+" : rs < 0 ? "-" : "") + Math.abs(rs) + "R";
+    return row("u", x.uid, x.p || "-", esc(uname(U[x.uid])) + " &middot; " + (x.dt ? fmtD(new Date(x.dt + "T00:00:00").getTime()) : ago(x.at)),
+      '<span class="rv ' + (x.r === "Win" ? "up" : x.r === "Loss" ? "dn" : "ne") + '">' + esc(rt) + "</span>", dtag(x.d === "Long"));
+  }).join("") : '<div class="empty">No trades recorded yet.</div>';
+  $("tMore").classList.toggle("hide", rec.length <= tlim);
+}
+$("tMoreB").onclick = function () { tlim += PER; rTrades(); };
+
+function rSetups() {
+  if (!loaded) { ["sDist","sChart","sInst","sList"].forEach(function (i) { $(i).innerHTML = loadingMsg(); }); return; }
+  var c = function (s) { return cnt(SE, function (i) { return i.s === s; }); };
+  $("sA").textContent = c("Waiting") + c("At POI"); $("sE").textContent = c("Entered"); $("sD").textContent = c("Done");
+  $("sDist").innerHTML = stackBar([{ l: "Waiting", v: c("Waiting"), c: "#22c55e" }, { l: "At entry zone", v: c("At POI"), c: "#F5C542" }, { l: "Entered", v: c("Entered"), c: "#60a5fa" }, { l: "Completed", v: c("Done"), c: "#9AA1AD" }]);
+  $("sChart").innerHTML = chart(series(SE, "at", 8), wlabels(8), "#60a5fa");
+  $("sInst").innerHTML = bars(topN(SE, function (x) { return x.p; }, 6), SE.length, "#F5C542");
+  var rec = SE.slice().sort(function (a, b) { return b.at - a.at; });
+  $("sList").innerHTML = rec.length ? rec.slice(0, slim).map(function (x) {
+    return row("u", x.uid, x.p || "-", esc(uname(U[x.uid])) + " &middot; " + ago(x.at), '<span class="sp ' + (SCLS[x.s] || "don") + '">' + esc(SLAB[x.s] || x.s) + "</span>", dtag(x.b === "Bullish"));
+  }).join("") : '<div class="empty">No setups created yet.</div>';
+  $("sMore").classList.toggle("hide", rec.length <= slim);
+}
+$("sMoreB").onclick = function () { slim += PER; rSetups(); };
+
+function rReports() {
+  if (!loaded) { ["rUsers","rActive","rTrades","rSetups","rEng"].forEach(function (i) { $(i).innerHTML = loadingMsg(); }); return; }
+  var us = ulist(), lb = wlabels(8), now = Date.now();
+  $("rUsers").innerHTML = chart(series(us, "created", 8), lb, "#F5C542");
+  $("rActive").innerHTML = chart(weeks(8).map(function (b) { return cnt(us, function (u) { return u.trades.concat(u.setups).some(function (x) { return x.at > b.s && x.at <= b.e; }); }); }), lb, "#4ade80");
+  $("rTrades").innerHTML = chart(series(TR, "at", 8), lb, "#F5C542");
+  $("rSetups").innerHTML = chart(series(SE, "at", 8), lb, "#60a5fa");
+  var n = us.length, wt = cnt(us, function (u) { return u.trades.length > 0; }), ws = cnt(us, function (u) { return u.setups.length > 0; });
+  var a7 = cnt(us, function (u) { return u.last && now - u.last < 7 * DAY; }), a30 = cnt(us, function (u) { return u.last && now - u.last < 30 * DAY; });
+  function line(k, v) { return "<div><span>" + k + "</span><b>" + v + "</b></div>"; }
+  $("rEng").innerHTML = line("Total users", n) + line("Recorded at least one trade", wt + " (" + pct(wt, n) + ")") + line("Created at least one setup", ws + " (" + pct(ws, n) + ")") +
+    line("Active in last 7 days", a7 + " (" + pct(a7, n) + ")") + line("Active in last 30 days", a30 + " (" + pct(a30, n) + ")") +
+    line("Average trades per user", n ? (TR.length / n).toFixed(1) : "-") + line("Average setups per user", n ? (SE.length / n).toFixed(1) : "-") +
+    line("Trades that followed the plan", pct(cnt(TR, function (i) { return i.fp === "Yes"; }), TR.length));
+}
+
+function rSet() {
+  if (!me) return;
+  $("seE").textContent = me.email || "-"; $("seU").textContent = me.uid; $("seL").textContent = loadedAt ? ago(loadedAt) : "-";
+  if (document.activeElement !== $("sth")) $("sth").value = S.th;
+  if (document.activeElement !== $("slim")) $("slim").value = S.lim;
+}
+$("ssave").onclick = function () {
+  var th = parseInt($("sth").value, 10), lim = parseInt($("slim").value, 10);
+  $("serr").textContent = ""; $("sok").textContent = "";
+  if (!(th >= 1 && th <= 365)) { $("serr").textContent = "Activity window must be 1 to 365 days."; return; }
+  if (!(lim >= 100 && lim <= 20000)) { $("serr").textContent = "Record limit must be 100 to 20000."; return; }
+  S.th = th; S.lim = lim; saveS(); $("sok").textContent = "Saved. Tap refresh to reload with the new limit."; renderAll();
+};
+
+/* ---------- announcements ---------- */
+function allUids() { return Object.keys(U); }
+async function pushAnn(id, t, m) {
+  var ids = allUids();
+  for (var i = 0; i < ids.length; i += 400) {
+    var b = writeBatch(db);
+    ids.slice(i, i + 400).forEach(function (uid) {
+      b.set(doc(db, "users", uid, "notifications", "ann_" + id), { t: t, m: m, read: false, createdAt: serverTimestamp(), announcement: id });
+    });
+    await b.commit();
+  }
+  return ids.length;
+}
+async function pullAnn(id) {
+  var ids = allUids();
+  for (var i = 0; i < ids.length; i += 400) {
+    var b = writeBatch(db);
+    ids.slice(i, i + 400).forEach(function (uid) { b.delete(doc(db, "users", uid, "notifications", "ann_" + id)); });
+    await b.commit();
+  }
+}
+function rAnn() {
+  var el = $("aList");
+  if (annErr) { el.innerHTML = '<div class="ban">' + esc(annErr) + "</div>"; return; }
+  if (!ANN.length) { el.innerHTML = '<div class="card"><div class="empty">No announcements yet.</div></div>'; return; }
+  el.innerHTML = '<div class="eyebrow" style="margin:6px 2px 8px">Previous announcements</div>' + ANN.map(function (a) {
+    var st = a.status === "published" ? '<span class="sp act">Published</span>' : a.status === "unpublished" ? '<span class="sp don">Unpublished</span>' : '<span class="sp poi">Draft</span>';
+    var btns = '<button class="btn o sm" data-a="edit" data-id="' + esc(a.id) + '">Edit</button>';
+    btns += a.status === "published" ? '<button class="btn o sm" data-a="unpub" data-id="' + esc(a.id) + '">Unpublish</button>' : '<button class="btn sm" data-a="pub" data-id="' + esc(a.id) + '">Publish</button>';
+    btns += '<button class="btn dng sm" data-a="del" data-id="' + esc(a.id) + '">Delete</button>';
+    return '<div class="an"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><b>' + esc(a.title) + "</b>" + st + "</div><p>" + esc(a.message) + "</p><small>" +
+      (a.publishedAt ? "Published " + fmtD(ms(a.publishedAt)) + (a.recipients ? " to " + a.recipients + " users" : "") : "Created " + fmtD(ms(a.createdAt))) + '</small><div class="ar">' + btns + "</div></div>";
+  }).join("");
+}
+function aReset() {
+  editA = null; $("at").value = ""; $("am").value = ""; $("aFormT").textContent = "New announcement";
+  $("aPub").textContent = "Publish to all users"; $("aDraft").classList.remove("hide"); $("aCancel").classList.add("hide");
+}
+function aMsg(e, o) { $("aErr").textContent = e || ""; $("aOk").textContent = o || ""; }
+async function aSave(publish) {
+  var t = $("at").value.trim(), m = $("am").value.trim(); aMsg();
+  if (!t || !m) { aMsg("Enter a title and a message."); return; }
+  if (publish && !loaded) { aMsg("Wait for user data to finish loading first."); return; }
+  if (publish && !confirm("Send this to " + allUids().length + " users?")) return;
+  $("aPub").disabled = $("aDraft").disabled = true;
+  try {
+    var id = editA, cur = ANN.filter(function (a) { return a.id === id; })[0];
+    var data = { title: t, message: m, updatedAt: serverTimestamp() };
+    if (publish) { data.status = "published"; data.publishedAt = serverTimestamp(); }
+    else if (!cur) data.status = "draft";
+    if (id) await updateDoc(doc(db, "announcements", id), data);
+    else { data.createdAt = serverTimestamp(); id = (await addDoc(collection(db, "announcements"), data)).id; }
+    if (publish) { var c = await pushAnn(id, t, m); await updateDoc(doc(db, "announcements", id), { recipients: c }); }
+    aReset(); aMsg("", publish ? "Published." : "Draft saved."); await loadAll();
+  } catch (e) { aMsg(friendlyError(e.code) + " (" + (e.code || "error") + ")"); }
+  $("aPub").disabled = $("aDraft").disabled = false;
+}
+$("aPub").onclick = function () { aSave(true); };
+$("aDraft").onclick = function () { aSave(false); };
+$("aCancel").onclick = function () { aReset(); aMsg(); };
+$("aList").onclick = async function (e) {
+  var b = e.target.closest("[data-a]"); if (!b) return;
+  var act = b.getAttribute("data-a"), id = b.getAttribute("data-id"), a = ANN.filter(function (x) { return x.id === id; })[0]; if (!a) return;
+  aMsg();
+  if (act === "edit") {
+    editA = id; $("at").value = a.title || ""; $("am").value = a.message || ""; $("aFormT").textContent = "Edit announcement";
+    var pubd = a.status === "published"; $("aPub").textContent = pubd ? "Save and update for all users" : "Publish to all users";
+    $("aDraft").classList.toggle("hide", pubd); $("aCancel").classList.remove("hide"); window.scrollTo(0, 0); return;
+  }
+  b.disabled = true;
+  try {
+    if (act === "pub") {
+      if (!loaded) { aMsg("Wait for user data to finish loading first."); b.disabled = false; return; }
+      if (!confirm("Send this to " + allUids().length + " users?")) { b.disabled = false; return; }
+      var c = await pushAnn(id, a.title, a.message);
+      await updateDoc(doc(db, "announcements", id), { status: "published", publishedAt: serverTimestamp(), recipients: c });
+    } else if (act === "unpub") {
+      if (!confirm("Remove this from every user's notifications?")) { b.disabled = false; return; }
+      await pullAnn(id); await updateDoc(doc(db, "announcements", id), { status: "unpublished" });
+    } else if (act === "del") {
+      if (!confirm("Delete this announcement? If published, it is also removed from users' notifications.")) { b.disabled = false; return; }
+      if (a.status === "published") await pullAnn(id);
+      await deleteDoc(doc(db, "announcements", id)); if (editA === id) aReset();
+    }
+    await loadAll();
+  } catch (err) { aMsg(friendlyError(err.code) + " (" + (err.code || "error") + ")"); b.disabled = false; }
+};
+
+/* ---------- user sheet ---------- */
+function openSheet(id) { SH = { id: id }; drawSheet(); document.body.classList.add("so"); $("shB").scrollTop = 0; }
+function closeSheet() { SH = null; document.body.classList.remove("so"); }
+function drawSheet() {
+  if (!SH) return;
+  var u = U[SH.id]; if (!u) { closeSheet(); return; }
+  var tr = u.trades, se = u.setups, w = by(tr, "Win"), tot = tr.reduce(function (s, i) { return s + (i.rs || 0); }, 0);
+  var sc = function (s) { return cnt(se, function (i) { return i.s === s; }); };
+  $("shE").textContent = "User profile"; $("shT").textContent = uname(u);
+  var h = '<div class="shs">Account</div>' + kv("Name", u.name || "Not set") + kv("Email", u.email || "Not stored") + kv("User ID", u.id) +
+    kv("Joined", u.created ? fmtD(u.created) : "Unknown") + kv("Status", status(u)) + kv("Last activity", u.last ? ago(u.last) : "None yet") +
+    kv("Subscription", "Not available (no subscription data exists)");
+  if (!u.profile) h += '<p class="note">This user has trades or setups but no profile document in the users collection.</p>';
+  h += '<div class="shs">Trading activity</div>' + kv("Trades", tr.length) + kv("Win rate", pct(w.length, tr.length)) + kv("Total result", tr.length ? (tot > 0 ? "+" : "") + tot.toFixed(1) + "R" : "-") +
+    kv("Plan followed", pct(cnt(tr, function (i) { return i.fp === "Yes"; }), tr.length)) +
+    kv("Setups", se.length + " (" + (sc("Waiting") + sc("At POI")) + " active, " + sc("Entered") + " entered, " + sc("Done") + " completed)");
+  var rec = tr.slice().sort(function (a, b) { return b.at - a.at; }).slice(0, 5);
+  if (rec.length) {
+    h += '<div class="shs">Latest trades</div>' + rec.map(function (x) {
+      var rs = x.rs || 0, rt = x.r === "BE" ? "BE" : (rs > 0 ? "+" : "-") + Math.abs(rs) + "R";
+      return '<div class="kv"><span>' + esc(x.p) + '</span><p>' + (x.d === "Long" ? "Buy" : "Sell") + " &middot; " + esc(rt) + " &middot; " + esc(x.r) + " &middot; " + ago(x.at) + "</p></div>";
+    }).join("");
+  }
+  h += '<div class="shs">Send a notification</div><label for="nt1">Title</label><input id="nt1" maxlength="120" placeholder="Title"><label for="nt2">Message</label><textarea id="nt2" maxlength="800" placeholder="Message to this user only"></textarea>' +
+    '<button class="btn" data-sh="notify" type="button">Send to this user</button><div class="err" id="nerr"></div><div class="okm" id="nok"></div>' +
+    '<button class="btn o" data-sh="close" type="button" style="margin-top:14px">Close</button>';
+  $("shB").innerHTML = h;
+}
+document.addEventListener("click", function (e) { var r = e.target.closest("[data-open]"); if (r) openSheet(r.getAttribute("data-id")); });
+$("scrim").onclick = closeSheet;
+$("sheet").onclick = async function (e) {
+  var b = e.target.closest("[data-sh]"); if (!b || !SH) return;
+  var a = b.getAttribute("data-sh");
+  if (a === "close") return closeSheet();
+  if (a === "notify") {
+    var t = $("nt1").value.trim(), m = $("nt2").value.trim(); $("nerr").textContent = ""; $("nok").textContent = "";
+    if (!t || !m) { $("nerr").textContent = "Enter a title and a message."; return; }
+    b.disabled = true;
+    try {
+      await addDoc(collection(db, "users", SH.id, "notifications"), { t: t, m: m, read: false, createdAt: serverTimestamp() });
+      $("nt1").value = ""; $("nt2").value = ""; $("nok").textContent = "Notification sent.";
+    } catch (err) { $("nerr").textContent = friendlyError(err.code) + " (" + (err.code || "error") + ")"; }
+    b.disabled = false;
+  }
+};
+</script>
+</body>
+</html>
