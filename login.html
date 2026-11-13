@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090909">
+<title>Log in | Trade Buddy</title>
+<style>
+:root{--brand:#FFC928;--brand2:#FFDD73;--bg:#090909;--s1:#111214;--s2:#17191C;--line:rgba(255,255,255,.1);--ink:#fff;--mute:#A1A1AA;--bad:#f87171;
+--head:"Segoe UI","Helvetica Neue",system-ui,sans-serif;box-sizing:border-box}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--ink);font:16px/1.55 var(--head);display:flex;flex-direction:column;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+a{color:inherit;text-decoration:none}
+h1,p{margin:0}
+.glow{position:fixed;inset:0;pointer-events:none;z-index:0}
+.glow::before{content:"";position:absolute;left:50%;top:-240px;width:860px;height:600px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(255,201,40,.3),transparent)}
+.glow::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at top,#000 5%,transparent 65%);mask-image:radial-gradient(ellipse at top,#000 5%,transparent 65%);opacity:.45}
+.top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;padding:18px 20px;max-width:1060px;width:100%;margin:0 auto}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px}
+.mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#E0A800);display:grid;place-items:center}
+.mark svg{width:16px;height:16px}
+.back{color:var(--mute);font-size:14.5px;font-weight:600}
+.back:hover{color:var(--ink)}
+main{position:relative;z-index:1;flex:1;display:grid;place-items:center;padding:10px 16px 40px}
+.card{width:100%;max-width:430px;border:1px solid var(--line);border-radius:26px;padding:30px 24px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 100px rgba(255,201,40,.1)}
+.card h1{font-size:28px;font-weight:800;letter-spacing:-.8px;line-height:1.15}
+.sub{color:var(--mute);margin:8px 0 22px}
+label{display:block;font-size:13.5px;font-weight:600;color:var(--mute);margin:14px 0 6px}
+.field{position:relative}
+input{width:100%;font:inherit;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:14px 16px;outline:none;transition:.15s}
+input::placeholder{color:#5d7066}
+input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(255,201,40,.18)}
+.field input{padding-right:70px}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mute);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;padding:8px}
+.eye:hover{color:var(--ink)}
+.btn{width:100%;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand);color:#161100;font:inherit;font-weight:700;font-size:16px;border-radius:999px;padding:15px 24px;border:1px solid var(--brand);cursor:pointer;transition:.2s;box-shadow:0 8px 28px rgba(255,201,40,.22)}
+.btn:hover:not(:disabled){background:var(--brand2);border-color:var(--brand2)}
+.btn:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:16px;padding:12px 14px;border-radius:12px;font-size:14.5px;display:none}
+.msg.err{display:block;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.35);color:#fecaca}
+.msg.ok{display:block;background:rgba(255,201,40,.1);border:1px solid rgba(255,201,40,.35);color:var(--brand2)}
+.alt{text-align:center;color:var(--mute);font-size:15px;margin-top:20px}
+.alt a{color:var(--brand2);font-weight:700}
+.row{display:flex;justify-content:flex-end;margin-top:10px}
+.link{background:none;border:0;color:var(--brand2);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0}
+.hint{font-size:12.5px;color:var(--mute);margin-top:6px}
+.spin{width:16px;height:16px;border:2.5px solid rgba(3,21,10,.3);border-top-color:#161100;border-radius:50%;animation:s .7s linear infinite;display:none}
+.btn:disabled .spin{display:inline-block}
+@keyframes s{to{transform:rotate(360deg)}}
+a:focus-visible,button:focus-visible{outline:2px solid var(--brand2);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="top">
+  <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
+  <a class="back" href="index.html">Back to home</a>
+</div>
+<main>
+  <div class="card">
+    <h1>Welcome Back.</h1>
+    <p class="sub">Your trading journey continues here. Sign in to access your trading workspace.</p>
+    <form id="f" novalidate>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+      <label for="pw">Password</label>
+      <div class="field"><input id="pw" type="password" autocomplete="current-password" placeholder="Your password" required><button type="button" class="eye" id="eye">Show</button></div>
+      <div class="row"><button type="button" class="link" id="forgot">Forgot password?</button></div>
+      <button class="btn" id="go" type="submit"><span class="spin"></span><span id="gol">Log in</span></button>
+      <div class="msg" id="msg" role="alert"></div>
+    </form>
+    <p class="alt">New here? <a href="signup.html">Create an account</a></p>
+  </div>
+</main>
+
+<script type="module">
+import { auth, AFTER_LOGIN, friendlyError } from "./firebase.js";
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+
+var $ = function (i) { return document.getElementById(i); };
+
+onAuthStateChanged(auth, function (u) { if (u) location.replace(AFTER_LOGIN); });
+
+$("eye").addEventListener("click", function () {
+  var show = $("pw").type === "password";
+  $("pw").type = show ? "text" : "password"; $("eye").textContent = show ? "Hide" : "Show";
+});
+
+function show(t, cls) { var m = $("msg"); m.textContent = t; m.className = "msg " + cls; }
+
+$("f").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  var email = $("email").value.trim(), pw = $("pw").value;
+  if (!email || !pw) return show("Enter your email and password.", "err");
+  $("go").disabled = true; $("gol").textContent = "Logging in..."; $("msg").className = "msg";
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+    location.replace(AFTER_LOGIN);
+  } catch (err) {
+    $("go").disabled = false; $("gol").textContent = "Log in";
+    show(friendlyError(err.code), "err");
+  }
+});
+
+$("forgot").addEventListener("click", async function () {
+  var email = $("email").value.trim();
+  if (!email) { $("email").focus(); return show("Type your email above first, then tap Forgot password.", "err"); }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    show("If an account exists for that email, a reset link is on its way. Check spam too.", "ok");
+  } catch (err) { show(friendlyError(err.code), "err"); }
+});
+</script>
+</body>
+</html>
