@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090909">
+<title>Trade Buddy | Your personal trading companion</title>
+<meta name="description" content="Track your trades, understand your performance, and discover what is working and what needs improvement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FFC928;--y2:#F5B82E;--ylt:#FFDD73;--bg:#090909;--s1:#111214;--s2:#17191C;--s3:#202226;--line:rgba(255,255,255,.08);--ink:#fff;--mute:#A1A1AA;--pos:#22c55e;--pos2:#4ade80;--bad:#f87171;--f:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;--serif:"Fraunces",Georgia,serif;box-sizing:border-box}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px)}
+a{color:inherit;text-decoration:none}h1,h2,h3,p{margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.glow{position:absolute;inset:0 0 auto 0;height:560px;pointer-events:none;background:radial-gradient(ellipse 60% 70% at 50% 0,rgba(255,201,40,.16),transparent)}
+header{position:sticky;top:0;z-index:50;background:rgba(9,9,9,.88);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo{font-family:var(--serif);font-weight:600;font-size:21px;display:flex;align-items:center;gap:10px}
+.mark{width:30px;height:30px;border-radius:9px;background:var(--y);display:grid;place-items:center}
+.mark svg{width:17px;height:17px}
+nav{display:flex;align-items:center;gap:6px}
+nav a.l{color:var(--mute);font-size:14.5px;font-weight:600;padding:8px 13px;border-radius:999px}
+nav a.l:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--y);color:#161100;font:inherit;font-weight:700;border-radius:999px;padding:14px 26px;border:1px solid var(--y);transition:.15s}
+.btn:hover{background:var(--ylt);border-color:var(--ylt)}
+.btn.o{background:transparent;color:var(--ink);border-color:rgba(255,255,255,.22)}
+.btn.o:hover{border-color:var(--y);color:var(--y)}
+.btn.sm{padding:9px 18px;font-size:14.5px}
+#menu{display:none;background:none;border:1px solid var(--line);border-radius:12px;width:42px;height:42px;color:var(--ink);font-size:19px;cursor:pointer}
+@media (max-width:820px){#menu{display:block}
+ nav{display:none;position:absolute;left:0;right:0;top:62px;background:#111214;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;padding:10px 20px 18px;gap:0}
+ nav.open{display:flex}nav a.l{padding:14px 0;border-bottom:1px solid var(--line);border-radius:0;font-size:16px}nav .btn{margin-top:14px}}
+.hero{position:relative;padding:64px 0 24px;text-align:center}
+.hero>*{position:relative}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,201,40,.35);background:rgba(255,201,40,.08);color:var(--ylt);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+.hero h1{font-family:var(--serif);font-size:clamp(36px,7.6vw,68px);font-weight:600;letter-spacing:-.025em;line-height:1.06;margin:22px auto 0;max-width:15em}
+.hero h1 em{font-style:normal;color:var(--y)}
+.lead{font-size:clamp(16px,2.3vw,19px);color:var(--mute);max-width:36em;margin:20px auto 30px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.prev{max-width:880px;margin:54px auto 0;border:1px solid var(--line);border-radius:26px;padding:12px;background:var(--s1);text-align:left;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 100px rgba(255,201,40,.07)}
+.prev .in{border-radius:18px;background:var(--bg);border:1px solid var(--line);padding:18px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--y)}
+.prev h3{font-family:var(--serif);font-size:26px;font-weight:600;margin:4px 0 2px}
+.prev .sub{color:var(--mute);font-size:14px}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.kp div{background:var(--s2);border:1px solid var(--line);border-radius:16px;padding:14px}
+.kp small{display:block;color:var(--mute);font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+.kp b{display:block;font-family:var(--serif);font-size:26px;font-weight:600;margin-top:2px}
+.up{color:var(--pos2)}.dn{color:var(--bad)}
+.tr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.tr span.t{font-size:11px;font-weight:700;border-radius:999px;padding:3px 10px}
+.buy{background:rgba(34,197,94,.14);color:var(--pos2)}.sell{background:rgba(248,113,113,.14);color:var(--bad)}
+.tr b{font-family:var(--serif);font-size:17px;font-weight:600;margin-left:10px}
+.tr div:last-child{text-align:right;font-weight:700}
+.note{color:var(--mute);font-size:12.5px;margin-top:10px;text-align:center}
+@media (max-width:560px){.kp{grid-template-columns:1fr 1fr}.kp div:first-child{grid-column:span 2}}
+section{padding:84px 0 0}
+.sh{max-width:36em;margin:0 auto 36px;text-align:center}
+.sh small{color:var(--y);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.sh h2{font-family:var(--serif);font-size:clamp(30px,5.2vw,46px);font-weight:600;letter-spacing:-.02em;line-height:1.1;margin-top:10px}
+.sh p{color:var(--mute);margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:22px;padding:22px}
+.card .ic{width:44px;height:44px;border-radius:13px;background:rgba(255,201,40,.12);color:var(--y);display:grid;place-items:center;margin-bottom:16px}
+.card .ic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:6px}
+.card p{color:var(--mute);font-size:15px}
+.soon{display:inline-block;font-family:var(--f);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--y);border:1px solid rgba(255,201,40,.4);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+.st .n{width:40px;height:40px;border-radius:50%;background:var(--y);color:#161100;font-weight:800;display:grid;place-items:center;margin-bottom:16px}
+.why{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;max-width:820px;margin:0 auto}
+@media (max-width:700px){.why{grid-template-columns:1fr}}
+.why div{display:flex;gap:14px;padding:18px 0;border-top:1px solid var(--line)}
+.why i{flex:none;width:26px;height:26px;border-radius:50%;background:rgba(255,201,40,.14);display:grid;place-items:center;color:var(--y);font-style:normal;font-weight:800;font-size:14px}
+.why h3{font-size:16.5px;font-weight:700;margin-bottom:2px}.why p{color:var(--mute);font-size:14.5px}
+.final{margin-top:84px;text-align:center;border-radius:30px;padding:60px 22px;border:1px solid rgba(255,201,40,.3);background:radial-gradient(ellipse at top,rgba(255,201,40,.18),transparent 70%),var(--s1)}
+.final h2{font-family:var(--serif);font-size:clamp(28px,5vw,44px);font-weight:600;letter-spacing:-.02em;line-height:1.1;max-width:14em;margin:0 auto}
+.final p{color:var(--mute);margin:14px 0 26px}
+footer{margin-top:70px;border-top:1px solid var(--line);padding:34px 0 calc(40px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:14px}
+.foot{display:flex;flex-wrap:wrap;gap:18px 36px;justify-content:space-between}
+.foot a:hover{color:var(--ink)}.fl{display:flex;gap:8px 22px;flex-wrap:wrap}
+.risk{margin-top:22px;font-size:12.5px;line-height:1.6;max-width:62em;opacity:.85}
+a:focus-visible,button:focus-visible{outline:2px solid var(--y);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
+  <button id="menu" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+  <nav id="nav"><a class="l" href="#features">Features</a><a class="l" href="#how">How it works</a><a class="l" href="#why">Why Trade Buddy</a><a class="l" href="login.html">Log in</a><a class="btn sm" href="signup.html">Get Started</a></nav>
+</div></header>
+
+<div style="position:relative"><div class="glow"></div>
+<main class="wrap">
+  <div class="hero">
+    <span class="pill">Your personal trading companion</span>
+    <h1>Trade Smarter. Understand Your Performance. <em>Grow With Every Trade.</em></h1>
+    <p class="lead">Your personal trading companion. Track your trades, understand your performance, and discover what is working and what needs improvement.</p>
+    <div class="cta"><a class="btn" href="signup.html">Get Started</a><a class="btn o" href="login.html">Log In</a></div>
+
+    <div class="prev" aria-label="Trade Buddy dashboard preview"><div class="in">
+      <div class="eyebrow">YOUR TRADING WORKSPACE</div><h3>Hello, Alex</h3><div class="sub">Welcome back. Here's an overview of your trading activity.</div>
+      <div class="kp"><div><small>Net profit / loss</small><b class="up">+$1,240</b></div><div><small>Win rate</small><b>62%</b></div><div><small>Total trades</small><b>48</b></div></div>
+      <div class="tr"><div><span class="t buy">BUY</span><b>XAUUSD</b></div><div class="up">+2R &nbsp; +$150</div></div>
+      <div class="tr"><div><span class="t sell">SELL</span><b>EURUSD</b></div><div class="dn">&minus;1R &nbsp; &minus;$75</div></div>
+      <div class="tr"><div><span class="t buy">BUY</span><b>GBPJPY</b></div><div class="up">+1.5R &nbsp; +$110</div></div>
+    </div><p class="note" style="margin:8px 0 2px">Preview with sample data</p></div>
+  </div>
+
+  <section id="features">
+    <div class="sh"><small>What Trade Buddy does</small><h2>Everything you need to understand your trading</h2><p>Simple tools, plain language, and enough depth for experienced traders.</p></div>
+    <div class="grid">
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4z"/><path d="M8 9h8M8 13h5"/></svg></div><h3>Trading Journal</h3><p>Your trading diary. Record each trade, how you felt, and what you learned.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>Performance Analytics</h3><p>See your win rate, profit and loss, and what each trade is worth on average.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div><h3>Trading Setups</h3><p>Plan trade ideas ahead. Track which ones are waiting, ready or already entered.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg></div><h3>Trading Calculators</h3><p>Work out your trade size, account safety and more, with simple explanations.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></div><h3>MT4/MT5 Connection <span class="soon">Coming soon</span></h3><p>Link your trading account to bring in your trades automatically.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div><h3>Behaviour Insights</h3><p>Spot how your mood and sticking to your plan affect your results.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="sh"><small>How it works</small><h2>Three simple steps</h2></div>
+    <div class="steps">
+      <div class="card st"><div class="n">1</div><h3>Record your trades</h3><p>Add your trades in seconds. Connecting your MT4/MT5 account is coming soon.</p></div>
+      <div class="card st"><div class="n">2</div><h3>Track your habits</h3><p>Watch your performance and trading habits build up over time.</p></div>
+      <div class="card st"><div class="n">3</div><h3>Learn and improve</h3><p>Understand your results and make better-informed trading decisions.</p></div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="sh"><small>Why Trade Buddy?</small><h2>Built to help you improve</h2></div>
+    <div class="why">
+      <div><i>&#10003;</i><span><h3>Easy to use</h3><p>A clean layout made for your phone.</p></span></div>
+      <div><i>&#10003;</i><span><h3>Beginner-friendly</h3><p>Plain English, with explanations next to every number.</p></span></div>
+      <div><i>&#10003;</i><span><h3>Clear performance insights</h3><p>Know what is working and what is not.</p></span></div>
+      <div><i>&#10003;</i><span><h3>Organised trading history</h3><p>Search by instrument and see results for each one.</p></span></div>
+      <div><i>&#10003;</i><span><h3>Builds discipline</h3><p>Track whether you followed your plan on every trade.</p></span></div>
+      <div><i>&#10003;</i><span><h3>Automatic importing <span class="soon">Coming soon</span></h3><p>Bring trades in straight from MT4/MT5.</p></span></div>
+    </div>
+  </section>
+
+  <div class="final"><h2>Ready to understand your trading?</h2><p>Create your free account and record your first trade today.</p><a class="btn" href="signup.html">Create Free Account</a></div>
+</main></div>
+
+<footer><div class="wrap">
+  <div class="foot"><div><b style="color:var(--ink);font-family:var(--serif);font-size:18px">Trade Buddy</b><br>Your personal trading companion.</div>
+  <div class="fl"><a href="#features">Features</a><a href="#how">How it works</a><a href="#why">Why Trade Buddy</a><a href="login.html">Log in</a><a href="signup.html">Sign up</a></div></div>
+  <p class="risk">Risk warning: Trading leveraged products such as forex, CFDs and crypto carries a high level of risk and may not suit everyone. Trade Buddy provides tools for recording and analysis only and does not give financial advice. Past results do not guarantee future performance.</p>
+  <p style="margin-top:14px">&copy; <span id="yr">2026</span> Trade Buddy</p>
+</div></footer>
+<script>
+(function(){var b=document.getElementById("menu"),n=document.getElementById("nav");
+b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});
+n.addEventListener("click",function(e){if(e.target.tagName=="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false")}});
+document.getElementById("yr").textContent=new Date().getFullYear();})();
+</script>
+</body>
+</html>
