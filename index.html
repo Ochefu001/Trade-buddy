@@ -99,6 +99,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--y);outline-offset:3
 
 <div style="position:relative"><div class="glow"></div>
 <main class="wrap">
+  <div id="delmsg" role="status" style="display:none;margin-top:18px;border:1px solid rgba(255,201,40,.4);background:rgba(255,201,40,.08);color:var(--ylt);border-radius:16px;padding:14px 18px;text-align:center;font-weight:600">Your Trade Buddy account and its data have been permanently deleted. We're sorry to see you go.</div>
   <div class="hero">
     <span class="pill">Your personal trading companion</span>
     <h1>Trade Smarter. Understand Your Performance. <em>Grow With Every Trade.</em></h1>
@@ -152,7 +153,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--y);outline-offset:3
 
 <footer><div class="wrap">
   <div class="foot"><div><b style="color:var(--ink);font-family:var(--serif);font-size:18px">Trade Buddy</b><br>Your personal trading companion.</div>
-  <div class="fl"><a href="#features">Features</a><a href="#how">How it works</a><a href="#why">Why Trade Buddy</a><a href="login.html">Log in</a><a href="signup.html">Sign up</a></div></div>
+  <div class="fl"><a href="#features">Features</a><a href="#how">How it works</a><a href="#why">Why Trade Buddy</a><a href="login.html">Log in</a><a href="signup.html">Sign up</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="your-data.html">Your Trading Data</a></div></div>
   <p class="risk">Risk warning: Trading leveraged products such as forex, CFDs and crypto carries a high level of risk and may not suit everyone. Trade Buddy provides tools for recording and analysis only and does not give financial advice. Past results do not guarantee future performance.</p>
   <p style="margin-top:14px">&copy; <span id="yr">2026</span> Trade Buddy</p>
 </div></footer>
@@ -160,7 +161,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--y);outline-offset:3
 (function(){var b=document.getElementById("menu"),n=document.getElementById("nav");
 b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});
 n.addEventListener("click",function(e){if(e.target.tagName=="A"){n.classList.remove("open");b.setAttribute("aria-expanded","false")}});
-document.getElementById("yr").textContent=new Date().getFullYear();})();
+document.getElementById("yr").textContent=new Date().getFullYear();
+if(/[?&]deleted=1/.test(location.search)){document.getElementById("delmsg").style.display="block";try{history.replaceState(null,"",location.pathname+location.hash)}catch(e){}}})();
 </script>
 </body>
 </html>
