@@ -45,6 +45,9 @@ input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(255,201,40,.18)}
 .row{display:flex;justify-content:flex-end;margin-top:10px}
 .link{background:none;border:0;color:var(--brand2);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:0}
 .hint{font-size:12.5px;color:var(--mute);margin-top:6px}
+.chk{display:flex;align-items:flex-start;gap:12px;margin:20px 0 0;font-size:14px;font-weight:500;line-height:1.5;color:var(--mute);cursor:pointer}
+.chk input{width:22px;height:22px;flex:none;margin:1px 0 0;padding:0;accent-color:var(--brand);cursor:pointer}
+.chk a{color:var(--brand2);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .spin{width:16px;height:16px;border:2.5px solid rgba(3,21,10,.3);border-top-color:#161100;border-radius:50%;animation:s .7s linear infinite;display:none}
 .btn:disabled .spin{display:inline-block}
 @keyframes s{to{transform:rotate(360deg)}}
@@ -71,6 +74,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--brand2);outline-off
       <div class="field"><input id="pw" type="password" autocomplete="new-password" placeholder="At least 8 characters" required><button type="button" class="eye" data-t="pw">Show</button></div>
       <label for="pw2">Confirm password</label>
       <div class="field"><input id="pw2" type="password" autocomplete="new-password" placeholder="Repeat password" required><button type="button" class="eye" data-t="pw2">Show</button></div>
+      <label class="chk" for="agree"><input id="agree" type="checkbox"><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a> and acknowledge the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
       <button class="btn" id="go" type="submit"><span class="spin"></span><span id="gol">Create account</span></button>
       <div class="msg" id="msg" role="alert"></div>
     </form>
@@ -85,6 +89,8 @@ import { doc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gs
 
 var $ = function (i) { return document.getElementById(i); };
 var busy = false;
+/* Version numbers of the legal documents. Change these when you publish a new version of terms.html / privacy.html. */
+var TERMS_VERSION = "1.0", PRIVACY_VERSION = "1.0";
 
 onAuthStateChanged(auth, function (u) { if (u && !busy) location.replace(AFTER_LOGIN); });
 
@@ -104,6 +110,7 @@ $("f").addEventListener("submit", async function (e) {
   if (!email) return show("Enter your email.", "err");
   if (pw.length < 8) return show("Password must be at least 8 characters.", "err");
   if (pw !== pw2) return show("Passwords don't match.", "err");
+  if (!$("agree").checked) return show("Please tick the box to agree to the Terms of Service and Privacy Policy.", "err");
 
   busy = true; $("go").disabled = true; $("gol").textContent = "Creating account..."; $("msg").className = "msg";
   try {
@@ -112,6 +119,13 @@ $("f").addEventListener("submit", async function (e) {
     try {
       await setDoc(doc(db, "users", cred.user.uid), { name: name, email: email, createdAt: serverTimestamp() });
     } catch (x) { console.warn(x); }
+    /* Consent record: separate top-level document. Firestore rules let you create it once but never edit it. */
+    var consent = { uid: cred.user.uid, termsVersion: TERMS_VERSION, privacyVersion: PRIVACY_VERSION, acceptedAt: serverTimestamp() };
+    try { await setDoc(doc(db, "consents", cred.user.uid), consent); }
+    catch (x) {
+      console.warn(x);
+      try { await setDoc(doc(db, "consents", cred.user.uid), consent); } catch (y) { console.warn(y); }
+    }
     try {
       await addDoc(collection(db, "users", cred.user.uid, "notifications"), { t: "Welcome to Trade Buddy, " + name.split(" ")[0], m: "Your account is ready. Save your first setup, then log your trades to see your stats and expectancy. Remember to verify your email.", read: false, createdAt: serverTimestamp() });
     } catch (x) { console.warn(x); }
