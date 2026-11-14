@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090909">
+<title>Your Trading Data: How It Works | Trade Buddy</title>
+<meta name="description" content="Where Trade Buddy stores your trading records, who can see them, how they are used, and how you can delete them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FFC928;--ylt:#FFDD73;--bg:#090909;--s1:#111214;--s2:#17191C;--line:rgba(255,255,255,.1);--ink:#fff;--mute:#A1A1AA;--f:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;--serif:"Fraunces",Georgia,serif;box-sizing:border-box}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px)}
+a{color:inherit;text-decoration:none}h1,h2,h3,p,ul,ol{margin:0}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:50;background:rgba(9,9,9,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1060px;margin:0 auto;padding:0 20px}
+.logo{font-family:var(--serif);font-weight:600;font-size:20px;display:flex;align-items:center;gap:10px}
+.mark{width:28px;height:28px;border-radius:9px;background:var(--y);display:grid;place-items:center}
+.mark svg{width:16px;height:16px}
+.back{color:var(--mute);font-size:14.5px;font-weight:600}.back:hover{color:var(--ink)}
+.glow{position:absolute;inset:0 0 auto 0;height:380px;pointer-events:none;background:radial-gradient(ellipse 60% 70% at 50% 0,rgba(255,201,40,.13),transparent)}
+.top{position:relative;padding:38px 0 10px}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--y);text-transform:uppercase}
+h1{font-family:var(--serif);font-size:clamp(32px,7vw,46px);font-weight:600;letter-spacing:-.02em;line-height:1.1;margin:8px 0 10px}
+.meta{color:var(--mute);font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 4px}
+.tabs a{border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;color:var(--mute)}
+.tabs a:hover{color:var(--ink);border-color:rgba(255,255,255,.25)}
+.tabs a.on{background:rgba(255,201,40,.1);border-color:rgba(255,201,40,.45);color:var(--ylt)}
+.box{border:1px solid var(--line);background:var(--s1);border-radius:18px;padding:16px 18px;margin:22px 0}
+.box.warn{border-color:rgba(255,201,40,.4);background:rgba(255,201,40,.07)}
+.box p{color:#d4d4d8;font-size:15px}
+.box b{color:var(--ink)}
+article h2{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.01em;line-height:1.2;margin:40px 0 10px}
+article h3{font-size:16px;font-weight:700;margin:20px 0 6px}
+article p,article li{color:#d4d4d8;font-size:16px}
+article p{margin:0 0 14px}
+article ul,article ol{padding-left:22px;margin:0 0 14px}
+article li{margin:0 0 7px}
+article a{color:var(--ylt);text-decoration:underline;text-underline-offset:3px}
+article strong{color:var(--ink)}
+.ph{background:rgba(255,201,40,.18);color:var(--ylt);border:1px dashed rgba(255,201,40,.6);border-radius:6px;padding:0 6px;font-weight:600;font-size:.94em}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}
+@media (max-width:600px){.cols{grid-template-columns:1fr}}
+.cols div{border:1px solid var(--line);background:var(--s1);border-radius:16px;padding:14px 16px}
+.cols h3{margin:0 0 6px}
+.yes,.no,.soon{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;margin-right:6px;vertical-align:middle}
+.yes{background:rgba(34,197,94,.14);color:#4ade80}.no{background:rgba(248,113,113,.14);color:#f87171}.soon{border:1px solid rgba(255,201,40,.4);color:var(--y)}
+footer{margin-top:60px;border-top:1px solid var(--line);padding:28px 0 calc(36px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:14px}
+footer .fl{display:flex;gap:8px 22px;flex-wrap:wrap;margin-bottom:14px}
+footer a:hover{color:var(--ink)}
+.risk{font-size:12.5px;line-height:1.6;opacity:.85}
+a:focus-visible{outline:2px solid var(--y);outline-offset:3px}
+@media print{header,.glow,.tabs{display:none}body{background:#fff;color:#000}article p,article li,.meta,.box p{color:#000}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a href="index.html" class="logo"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#161100" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 3 5-6"/></svg></span>Trade Buddy</a>
+  <a class="back" href="index.html">Back to home</a>
+</div></header>
+<div style="position:relative"><div class="glow"></div>
+<main class="wrap">
+  <div class="top">
+    <div class="eyebrow">Data transparency</div>
+    <h1>Your Trading Data: How It Works</h1>
+    <div class="meta">Plain-language guide &middot; Last updated <span class="ph">[EFFECTIVE DATE]</span></div>
+    <nav class="tabs" aria-label="Legal pages">
+      <a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="your-data.html" class="on" aria-current="page">Your Trading Data</a>
+    </nav>
+  </div>
+  <article>
+
+<div class="box"><p>You type trades and setups into Trade Buddy, and this page explains, in plain language, what happens to them next. For the full legal detail, read the <a href="privacy.html">Privacy Policy</a>.</p></div>
+
+<h2>A. Where your records are stored</h2>
+<p>Trade Buddy uses <strong>Google Firebase</strong>. Your sign-in (email and password) is kept in Firebase Authentication. Your profile, trades, setups and notifications are kept in <strong>Cloud Firestore</strong>, Google&rsquo;s online database. Every record is filed under your own account ID, so the app knows it is yours and shows it to you on any phone or computer where you sign in.</p>
+<p>Your records are not kept only in your browser. If you clear your browser or change phones, they are still there when you sign in again.</p>
+
+<h2>B. Who can see your records</h2>
+<div class="cols">
+<div><h3><span class="yes">Yes</span>You</h3><p>You can see, edit and delete your own trades and setups.</p></div>
+<div><h3><span class="no">No</span>Other users</h3><p>The database rules do not let one user read another user&rsquo;s records.</p></div>
+</div>
+<div class="box"><p><b>Administrators.</b> A small number of authorized administrators can use an admin dashboard. It shows account names, emails, sign-up dates and summaries of trades and setups (for example how many, wins and losses, and popular instruments). The database rules allow administrators to read user records, so in principle that includes the notes you write. Administrators cannot edit or delete your trades and setups. We use this access only to run, support, secure and improve Trade Buddy.</p></div>
+<p>Google and our hosting provider also process data in order to run the service, as explained in the Privacy Policy. We cannot promise absolute secrecy: no online system is perfectly secure. We do apply the protections described in the Privacy Policy.</p>
+
+<h2>C. How your records are used</h2>
+<p>The figures you see are calculated from what you entered:</p>
+<ul>
+<li><strong>Trade history:</strong> a searchable list of your trades.</li>
+<li><strong>Performance statistics:</strong> total results and averages.</li>
+<li><strong>Win rate:</strong> how many of your trades were wins.</li>
+<li><strong>Risk and reward:</strong> how big your wins are compared with your losses, shown in R.</li>
+<li><strong>Insights:</strong> patterns, such as how your mood or sticking to your plan relates to results.</li>
+<li><strong>Setup tracking:</strong> trade ideas that are waiting, at the entry zone, entered or completed.</li>
+<li><strong>Personal progress:</strong> how your results and habits change over time.</li>
+</ul>
+<p>These are tools to help you reflect. They are not financial advice.</p>
+
+<h2>D. What Trade Buddy does and does not do</h2>
+<ul>
+<li><span class="no">No</span>It does <strong>not</strong> place or execute trades for you.</li>
+<li><span class="no">No</span>It does <strong>not</strong> connect to your brokerage account today.</li>
+<li><span class="no">No</span>It does <strong>not</strong> place orders.</li>
+<li><span class="no">No</span>It does <strong>not</strong> send your trading records to brokers.</li>
+<li><span class="no">No</span>It does <strong>not</strong> sell your trading records.</li>
+<li><span class="soon">Planned</span>MT4/MT5 connection is planned and is <strong>not available yet</strong>. If it is added, we will update our policies first and ask for your permission before you connect anything.</li>
+</ul>
+<p>Some pages link to broker and prop-firm websites. Some of those are affiliate links. Opening one takes you away from Trade Buddy, and we do not pass your trading records to those sites.</p>
+
+<h2>E. Your control over your records</h2>
+<ul>
+<li><strong>View:</strong> My Trades, My Setups and Insights show everything you have entered.</li>
+<li><strong>Change:</strong> open any trade or setup to edit it, or change your name in Profile.</li>
+<li><strong>Delete single records:</strong> you can delete individual trades and setups.</li>
+<li><strong>Delete everything:</strong> Dashboard &rarr; Menu &rarr; Data &amp; Privacy &rarr; <strong>Delete account</strong> permanently removes your trades, setups, notifications, profile, consent record and sign-in account. You will be asked for your password first. It cannot be undone.</li>
+<li><strong>Ask us:</strong> to request a copy of your information or ask any question, email <span class="ph">[CONTACT EMAIL]</span>.</li>
+</ul>
+
+  </article>
+</main></div>
+<footer><div class="wrap">
+  <div class="fl"><a href="index.html">Home</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="your-data.html">Your Trading Data</a><a href="signup.html">Sign up</a><a href="login.html">Log in</a></div>
+  <p class="risk">Risk warning: Trading leveraged products such as forex, CFDs and crypto carries a high level of risk and may not suit everyone. Trade Buddy provides tools for recording and analysis only and does not give financial advice. Past results do not guarantee future performance.</p>
+  <p style="margin-top:12px">&copy; <span id="yr">2026</span> Trade Buddy</p>
+</div></footer>
+<script>document.getElementById("yr").textContent=new Date().getFullYear();</script>
+</body>
+</html>
