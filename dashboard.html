@@ -243,9 +243,29 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
 .tradingview-widget-copyright{font-size:11px;color:var(--mute);text-align:center;padding:4px 8px;line-height:1.3}
 .tradingview-widget-copyright a{color:var(--y)}
 .chd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}
+.chd .bs{display:flex;gap:8px}.chd .bs .btn{width:auto}
+/* big chart */
+.cbar2{display:flex;gap:8px;align-items:center;margin-bottom:8px}.cbar2 .srch{flex:1;min-width:0}.cbar2 .btn{width:auto;flex:none}
+body.cmode .wrap{padding-left:0;padding-right:0}
+body.cmode .phr,body.cmode .top{display:none!important}body.cmode #v-chart .cbar2{margin-top:8px}body.cmode #v-chart .cbar2,body.cmode #v-chart .tabs,body.cmode #v-chart .note{margin-left:16px;margin-right:16px}
+body.cmode .tvbox{border-radius:0;border-left:0;border-right:0}
+.tvbox.fs{position:fixed;left:0;right:0;bottom:0;top:calc(env(safe-area-inset-top,0px) + 46px);z-index:80;border-radius:0;border:0;height:auto!important;margin:0}
+#fsb{display:none;position:fixed;top:0;left:0;right:0;z-index:81;background:var(--s1);border-bottom:1px solid var(--line);padding:env(safe-area-inset-top,0px) 12px 0;height:calc(env(safe-area-inset-top,0px) + 46px);align-items:center;justify-content:space-between}
+#fsb b{font-size:15px}#fsb button{background:var(--y);color:#161100;border:0;border-radius:999px;font-weight:700;padding:8px 16px;cursor:pointer}
+body.cfs{overflow:hidden}body.cfs #fsb{display:flex}body.cfs .bnav{display:none}
+/* levels + alerts */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.rrb{border:1px solid var(--line);background:var(--s2);border-radius:14px;padding:10px 12px;margin:12px 0 4px;font-size:13.5px;color:var(--mute)}
+.rrb b{color:var(--ink)}.rrb.bad{border-color:rgba(248,113,113,.45);color:#fecaca}
+.achk{display:flex;align-items:flex-start;gap:12px;margin:14px 0 0;font-size:14px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink);cursor:pointer}
+.achk input{width:22px;height:22px;flex:none;margin:1px 0 0;padding:0;accent-color:var(--y)}
+#pbn{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:95;background:var(--y);color:#161100;border-radius:16px;padding:12px 14px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;cursor:pointer;max-width:600px;margin:0 auto}
+#pbn small{display:block;font-weight:600;opacity:.8;margin-top:2px}
 </style>
 </head>
 <body>
+<div id="pbn" role="status"></div>
+<div id="fsb"><b id="fsl">Chart</b><button id="fsx" type="button">Close full screen</button></div>
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
   <div class="grab"></div>
@@ -323,6 +343,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
   <!-- SETUPS LIST -->
   <div class="view" id="v-setuplist">
     <p class="psub">Plan before you trade.</p>
+    <p class="note" id="pwst" style="margin:-8px 0 12px"></p>
     <div class="strip"><div><b id="nA">0</b><span>Active</span></div><div><b id="nE">0</b><span>Entered</span></div><div><b id="nD">0</b><span>Completed</span></div></div>
     <button class="btn" data-new="setup" style="margin-bottom:12px"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Create a Setup</button>
     <div class="card"><div class="tabs" id="tabs"></div></div>
@@ -346,6 +367,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
       </div>
       <div class="stg" id="s2">
         <p class="explain">Where will you act? Write the price area you are waiting for and how you plan to enter.</p>
+        <label>Price levels</label>
+        <div class="g3"><div><label for="ep" style="margin-top:0">Entry</label><input id="ep" inputmode="decimal" placeholder="2315.50"></div><div><label for="slp" style="margin-top:0">Stop loss</label><input id="slp" inputmode="decimal" placeholder="2310.00"></div><div><label for="tpp" style="margin-top:0">Take profit</label><input id="tpp" inputmode="decimal" placeholder="2330.00"></div></div>
+        <div class="rrb" id="rrb">Enter your entry, stop loss and take profit to see your risk-to-reward.</div>
+        <label class="achk" for="sal"><input id="sal" type="checkbox" checked><span>Alert me when price reaches my entry. Works while Trade Buddy is open on your phone.</span></label>
         <label for="poi">Entry zone (the price area you are waiting for)</label><input id="poi" placeholder="e.g. H1 OB at 2315.50">
         <label for="ltfn">Entry plan / confirmation needed</label><textarea id="ltfn" placeholder="e.g. M15 CHoCH + FVG entry"></textarea>
       </div>
@@ -357,7 +382,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
       <div class="stg rv2" id="s4"><h2>Review your setup</h2><div id="rev"></div></div>
       <div class="err" id="err"></div>
     </div>
-    <div class="card" id="schart"><div class="chd"><h2>Chart</h2><button class="btn o sm" id="sbtn" type="button">Show chart</button></div>
+    <div class="card" id="schart"><div class="chd"><h2>Chart</h2><div class="bs"><button class="btn o sm" id="sfs" type="button" style="display:none">Full screen</button><button class="btn o sm" id="sbtn" type="button">Show chart</button></div></div>
       <div class="tabs" id="stf" style="display:none;margin-bottom:10px"></div><div class="tvbox" id="sbox" style="display:none"></div></div>
     <div class="fbar"><button class="btn o" id="sback" type="button">Cancel</button><button class="btn" id="snext" type="button">Continue</button></div>
   </div>
@@ -442,9 +467,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
 
   <!-- CHART -->
   <div class="view" id="v-chart">
-    <div class="card"><label for="cq">Instrument</label>
-      <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="cq" placeholder="e.g. XAUUSD, EURUSD, BTCUSD" autocomplete="off" autocapitalize="characters" aria-label="Instrument"></div>
-      <div class="tabs" id="cchips" style="margin-top:10px"></div></div>
+    <div class="cbar2"><button class="back on" data-go="menu" type="button" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="cq" placeholder="e.g. XAUUSD, EURUSD, BTCUSD" autocomplete="off" autocapitalize="characters" aria-label="Instrument"></div><button class="btn sm" id="cfsb" type="button">Full screen</button></div>
+    <div class="tabs" id="cchips" style="margin:0 0 8px"></div>
     <div class="tvbox" id="cbox"></div>
     <p class="note">Charts by TradingView. Prices may be delayed or differ slightly from your broker. Use the chart's own search to change instrument or timeframe.</p>
   </div>
@@ -571,8 +595,8 @@ function tvSymbol(raw) {
 function mountChart(box, raw, tf, h) {
   var sym = tvSymbol(raw), iv = tvInterval(tf), k = sym + "|" + iv;
   if (!sym) return;
-  if (box._k === k && box.querySelector("iframe")) return;
-  box._k = k; box.style.height = h + "px";
+  if (box._k === k && box.querySelector("iframe")) { if (!box.classList.contains("fs")) box.style.height = h + "px"; return; }
+  box._k = k; if (!box.classList.contains("fs")) box.style.height = h + "px";
   box.innerHTML = '<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 24px);width:100%"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/' + encodeURIComponent(sym.replace(":", "-")) + '/" rel="noopener nofollow" target="_blank">' + esc(String(raw).trim().toUpperCase()) + ' chart</a> by TradingView</div></div>';
   var sc = document.createElement("script"); sc.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; sc.async = true;
   sc.text = JSON.stringify({ autosize: true, symbol: sym, interval: iv, timezone: "Etc/UTC", theme: "dark", style: "1", locale: "en", backgroundColor: "#1C2028", gridColor: "rgba(255,255,255,0.06)", allow_symbol_change: true, withdateranges: true, hide_side_toolbar: false, save_image: false, details: false, hotlist: false, calendar: false, support_host: "https://www.tradingview.com" });
@@ -580,8 +604,24 @@ function mountChart(box, raw, tf, h) {
   clearTimeout(box._t);
   box._t = setTimeout(function () { if (!box.querySelector("iframe")) box.insertAdjacentHTML("beforeend", '<div class="empty">The chart could not load. Check your connection, or turn off your ad blocker for this site.</div>'); }, 9000);
 }
-/* Chart page */
+/* Chart page: the chart fills the screen between the top bar and the bottom menu */
 var cSym = "";
+function chartH() {
+  var b = $("cbox"), t = b.getBoundingClientRect().top, nav = window.innerWidth >= 1024 ? 0 : (document.querySelector(".bnav").offsetHeight || 64);
+  return Math.max(420, Math.round(window.innerHeight - t - nav - 4));
+}
+function fsOpen(box, label) {
+  if (!box || !box.querySelector("iframe")) return;
+  box._oh = box.style.height; box.classList.add("fs"); box.style.height = ""; $("fsl").textContent = label || "Chart"; document.body.classList.add("cfs"); window.FSB = box;
+}
+function fsClose() {
+  var b = window.FSB; if (!b) return; b.classList.remove("fs"); b.style.height = b._oh || ""; document.body.classList.remove("cfs"); window.FSB = null;
+  if (b.id === "cbox") b.style.height = chartH() + "px";
+}
+$("fsx").onclick = fsClose;
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") fsClose(); });
+$("cfsb").onclick = function () { fsOpen($("cbox"), cSym || "Chart"); };
+window.addEventListener("resize", function () { if (curView === "chart" && !window.FSB) mountChart($("cbox"), cSym, "1H", chartH()); });
 function chartChips() {
   var cnt = {}; jitems.concat(items).forEach(function (i) { if (i.p) cnt[i.p] = (cnt[i.p] || 0) + 1; });
   var mine = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 8);
@@ -591,7 +631,7 @@ function chartChips() {
 function chartLoad() {
   var v = $("cq").value.trim().toUpperCase(); if (!v) return;
   cSym = v; try { localStorage.setItem("tb-chart", v); } catch (e) {}
-  chartChips(); mountChart($("cbox"), v, "1H", Math.max(380, window.innerHeight - 340));
+  chartChips(); mountChart($("cbox"), v, "1H", chartH());
 }
 function chartOpen() {
   if (!cSym) { try { cSym = localStorage.getItem("tb-chart") || ""; } catch (e) {} }
@@ -611,8 +651,10 @@ function schartRefresh() {
   var th = '<button type="button" data-t="h" class="' + (schTab === "h" ? "on" : "") + '">Big picture ' + esc(tfVal("htf")) + '</button><button type="button" data-t="l" class="' + (schTab === "l" ? "on" : "") + '">Entry ' + esc(tfVal("ltf")) + "</button>";
   if ($("stf")._h !== th) { $("stf")._h = th; $("stf").innerHTML = th; } // only redraw when it changed, so a tap is never lost
   if (!sym) { $("sbox")._k = ""; $("sbox").style.height = ""; $("sbox").innerHTML = '<div class="empty">Enter the pair or instrument above to see its chart.</div>'; return; }
-  mountChart($("sbox"), sym, schTab === "h" ? tfVal("htf") : tfVal("ltf"), 380);
+  mountChart($("sbox"), sym, schTab === "h" ? tfVal("htf") : tfVal("ltf"), Math.max(420, Math.round(window.innerHeight * 0.62)));
+  $("sfs").style.display = "";
 }
+$("sfs").onclick = function () { fsOpen($("sbox"), ($("pair").value.trim().toUpperCase() || "Chart") + " " + (schTab === "h" ? tfVal("htf") : tfVal("ltf"))); };
 $("sbtn").onclick = function () { schOpen = !schOpen; schartRefresh(); };
 $("stf").onclick = function (e) { var b = e.target.closest("button"); if (b) { schTab = b.getAttribute("data-t"); schartRefresh(); } };
 ["pair", "htf", "ltf", "htfc", "ltfc"].forEach(function (id) { $(id).addEventListener("change", schartRefresh); });
@@ -626,7 +668,7 @@ function titleFor(v) {
 }
 var curView = "home";
 function show(v) {
-  curView = v; closeSheet();
+  curView = v; closeSheet(); fsClose(); document.body.classList.toggle("cmode", v === "chart");
   document.querySelectorAll(".view").forEach(function (e) { e.classList.toggle("on", e.id === "v-" + v); });
   document.querySelectorAll(".bnav a").forEach(function (a) { a.classList.toggle("on", a.dataset.n === NAVMAP[v]); });
   $("phr").style.display = v === "home" ? "none" : "";
@@ -678,7 +720,7 @@ function tradeRow(i) {
 }
 function setupRow(i) {
   var buy = i.b === "Bullish", d = fmtTs(i.createdAt) || "Just now";
-  return '<button class="row" type="button" data-open="s" data-id="' + esc(i.id) + '" aria-label="Open ' + esc(i.p) + ' setup"><span class="rl"><span class="rt"><b>' + esc(i.p) + '</b><i class="dtag ' + (buy ? "buy" : "sell") + '">' + (buy ? "BUY" : "SELL") + '</i></span><small>' + (i.poi ? "Entry zone: " + esc(i.poi) + " &middot; " : "") + esc(d) + '</small></span><span class="sp ' + (SCLS[i.s] || "don") + '">' + esc(SLAB[i.s] || i.s) + '</span>' + CHEV + '</button>';
+  return '<button class="row" type="button" data-open="s" data-id="' + esc(i.id) + '" aria-label="Open ' + esc(i.p) + ' setup"><span class="rl"><span class="rt"><b>' + esc(i.p) + '</b><i class="dtag ' + (buy ? "buy" : "sell") + '">' + (buy ? "BUY" : "SELL") + '</i></span><small>' + (i.ep != null ? "Entry " + esc(i.ep) + " &middot; SL " + esc(i.sl) + " &middot; TP " + esc(i.tp) + " &middot; " : i.poi ? "Entry zone: " + esc(i.poi) + " &middot; " : "") + esc(d) + '</small></span><span class="sp ' + (SCLS[i.s] || "don") + '">' + esc(SLAB[i.s] || i.s) + '</span>' + CHEV + '</button>';
 }
 
 /* ---------- home ---------- */
@@ -792,7 +834,7 @@ function drawSheet() {
     var sb = it.b === "Bullish", st = it.s;
     $("shE").textContent = "Setup details"; $("shT").textContent = it.p;
     h += '<div class="ov"><div class="tags"><i class="dtag ' + (sb ? "buy" : "sell") + '">' + (sb ? "BUY" : "SELL") + '</i><span class="sp ' + (SCLS[st] || "don") + '">' + esc(SLAB[st] || st) + '</span></div><small style="color:var(--mute)">' + esc(fmtTs(it.createdAt)) + '</small></div>';
-    h += '<div class="shs">Trading plan</div>' + kv("Entry zone", it.poi) + kv("Big picture", it.htf || it.tf) + kv("Entry timeframe", it.ltf) + kv("Entry plan", it.ltfn);
+    h += '<div class="shs">Trading plan</div>' + kv("Entry price", it.ep != null ? String(it.ep) : "") + kv("Stop loss", it.sl != null ? String(it.sl) : "") + kv("Take profit", it.tp != null ? String(it.tp) : "") + kv("Risk : Reward", it.rr ? "1 : " + it.rr : "") + kv("Price alert", it.ep == null ? "" : it.alerted ? "Price reached your entry" : it.al === false ? "Off" : "On, while Trade Buddy is open") + kv("Entry zone", it.poi) + kv("Big picture", it.htf || it.tf) + kv("Entry timeframe", it.ltf) + kv("Entry plan", it.ltfn);
     if (it.htfn || it.c) h += '<div class="shs">Reason for the trade</div>' + kv("Why", it.htfn) + kv("Notes", it.c);
     if (SH.cf) {
       h += '<div class="cfm"><p>' + (SH.cf === "del" ? "Delete this " + esc(it.p) + " setup? This can't be undone." : "Cancel this " + esc(it.p) + " setup? It will move to Completed and be marked Invalidated.") + '</p><div class="acts" style="margin-top:0"><button class="btn dng" data-sh="' + (SH.cf === "del" ? "delok" : "cancelok") + '">' + (SH.cf === "del" ? "Yes, delete" : "Yes, cancel setup") + '</button><button class="btn o" data-sh="cfno">Keep it</button></div></div>';
@@ -801,6 +843,7 @@ function drawSheet() {
       if (st === "Waiting") b += '<button class="btn full" data-sh="stat" data-v="At POI">Price reached my entry zone</button><button class="btn o" data-sh="stat" data-v="Entered">Mark as Entered</button>';
       else if (st === "At POI") b += '<button class="btn full" data-sh="stat" data-v="Entered">Mark as Entered</button>';
       else if (st === "Entered") b += '<button class="btn full" data-sh="stat" data-v="Done">Mark as Completed</button>';
+      if (it.ep != null && (st === "At POI" || st === "Entered")) b += '<button class="btn o" data-sh="log" data-r="Win">Log win (take profit hit)</button><button class="btn o" data-sh="log" data-r="Loss">Log loss (stop loss hit)</button>';
       if (st !== "Done") b += '<button class="btn o" data-sh="log">Record a trade</button>';
       b += '<button class="btn o" data-sh="chart">View chart</button><button class="btn o" data-sh="sedit">Edit setup</button>';
       if (st === "Waiting" || st === "At POI") b += '<button class="btn dng" data-sh="cancel">Cancel setup</button>';
@@ -827,7 +870,9 @@ $("sheet").onclick = async function (e) {
   if (a === "log") {
     closeSheet(); resetTradeForm();
     $("jp").value = it.p; $("jd").value = it.b === "Bullish" ? "Long" : "Short";
-    $("jn").value = "Setup: HTF " + (it.htf || "-") + ", LTF " + (it.ltf || "-") + ", POI " + (it.poi || "-");
+    $("jn").value = "Setup: HTF " + (it.htf || "-") + ", LTF " + (it.ltf || "-") + ", POI " + (it.poi || "-") + (it.ep != null ? ". Entry " + it.ep + ", SL " + it.sl + ", TP " + it.tp : "");
+    var rr = b.getAttribute("data-r");
+    if (rr) { $("jr").value = rr; $("jrr").value = rr === "Win" ? (it.rr || "") : "1"; }
     return go("journal");
   }
   try {
@@ -875,10 +920,30 @@ $("jadd").onclick = async function () {
 
 /* ---------- guided setup ---------- */
 var STL = ["Basic information", "Trading plan", "Reason and confirmation", "Review and save"];
-function sdirty() { return ["pair", "htfn", "ltfn", "poi", "note"].some(function (x) { return $(x).value.trim(); }); }
+function pnum(x) { var n = parseFloat(String(x == null ? "" : x).replace(/,/g, "")); return isNaN(n) ? null : n; }
+function fnum(n) { return String(Math.round(n * 100000) / 100000); }
+/* Reads the three price levels and checks they make sense for a buy or a sell */
+function levels() {
+  var ep = pnum($("ep").value), sl = pnum($("slp").value), tp = pnum($("tpp").value), buy = $("bias").value === "Bullish", L = {ep: ep, sl: sl, tp: tp, buy: buy};
+  if (ep == null || sl == null || tp == null) { L.err = "Enter your entry, stop loss and take profit."; return L; }
+  if (ep <= 0 || sl <= 0 || tp <= 0) { L.err = "Prices must be above zero."; return L; }
+  if (buy && !(sl < ep && ep < tp)) { L.err = "For a Buy: stop loss must be below your entry, and take profit above it."; return L; }
+  if (!buy && !(tp < ep && ep < sl)) { L.err = "For a Sell: take profit must be below your entry, and stop loss above it."; return L; }
+  L.risk = Math.abs(ep - sl); L.reward = Math.abs(tp - ep); L.rr = Math.round(L.reward / L.risk * 100) / 100; return L;
+}
+function rrdraw() {
+  $("err").textContent = "";
+  var L = levels(), b = $("rrb"), any = $("ep").value.trim() || $("slp").value.trim() || $("tpp").value.trim();
+  if (!any) { b.className = "rrb"; b.textContent = "Enter your entry, stop loss and take profit to see your risk-to-reward."; return; }
+  if (L.err) { b.className = "rrb" + (L.ep != null && L.sl != null && L.tp != null ? " bad" : ""); b.textContent = L.ep != null && L.sl != null && L.tp != null ? L.err : "Fill in all three prices to see your risk-to-reward."; return; }
+  b.className = "rrb"; b.innerHTML = "Risk : Reward <b>1 : " + L.rr + "</b> &middot; risk " + fnum(L.risk) + " &middot; reward " + fnum(L.reward) + " (price distance)";
+}
+["ep", "slp", "tpp", "bias"].forEach(function (id) { $(id).addEventListener("input", rrdraw); $(id).addEventListener("change", rrdraw); });
+function sdirty() { return ["pair", "htfn", "ltfn", "poi", "note", "ep", "slp", "tpp"].some(function (x) { return $(x).value.trim(); }); }
 function resetSetupForm() {
   editS = null; sstep = 1;
-  ["pair", "htfn", "ltfn", "poi", "note", "htfc", "ltfc"].forEach(function (x) { $(x).value = ""; });
+  ["pair", "htfn", "ltfn", "poi", "note", "htfc", "ltfc", "ep", "slp", "tpp"].forEach(function (x) { $(x).value = ""; });
+  $("sal").checked = true; rrdraw();
   $("bias").value = "Bullish"; setTf("htf", "4H"); setTf("ltf", "15M"); $("err").textContent = ""; sdraw();
 }
 function newSetup() { if (editS) resetSetupForm(); go("setups"); }
@@ -886,6 +951,7 @@ function editSetup(it) {
   resetSetupForm(); editS = it.id;
   $("pair").value = it.p || ""; $("bias").value = it.b || "Bullish"; setTf("htf", it.htf || it.tf || "4H"); setTf("ltf", it.ltf || "15M");
   $("htfn").value = it.htfn || ""; $("ltfn").value = it.ltfn || ""; $("poi").value = it.poi || ""; $("note").value = it.c || "";
+  $("ep").value = it.ep != null ? it.ep : ""; $("slp").value = it.sl != null ? it.sl : ""; $("tpp").value = it.tp != null ? it.tp : ""; $("sal").checked = it.al !== false; rrdraw();
   go("setups"); $("pt").textContent = titleFor("setups"); sdraw();
 }
 function sdraw() {
@@ -898,6 +964,7 @@ function sdraw() {
   if (sstep === 4) {
     var b = $("bias").value === "Bullish" ? "Buy (price goes up)" : "Sell (price goes down)";
     $("rev").innerHTML = kv("Instrument", $("pair").value.trim().toUpperCase()) + kv("Direction", b) + kv("Timeframes", "Big picture " + tfVal("htf") + " \u2192 Entry " + tfVal("ltf")) +
+      kv("Entry price", $("ep").value.trim()) + kv("Stop loss", $("slp").value.trim()) + kv("Take profit", $("tpp").value.trim()) + kv("Risk : Reward", (function () { var L = levels(); return L.err ? "" : "1 : " + L.rr; })()) + kv("Price alert", $("sal").checked ? "On, when price reaches your entry" : "Off") +
       kv("Entry zone", $("poi").value.trim()) + kv("Entry plan", $("ltfn").value.trim()) + kv("Why", $("htfn").value.trim()) + kv("Notes", $("note").value.trim());
   }
 }
@@ -911,12 +978,17 @@ $("sback").onclick = function () {
 $("snext").onclick = async function () {
   $("err").textContent = "";
   if (sstep === 1 && !$("pair").value.trim()) { $("pair").focus(); $("err").textContent = "Enter the pair or instrument."; return; }
+  if (sstep === 2) { var L0 = levels(); if (L0.err) { $("err").textContent = L0.err; return; } }
   if (sstep < 4) { sstep++; sdraw(); window.scrollTo(0, 0); return; }
-  var data = { p: $("pair").value.trim().toUpperCase(), b: $("bias").value, htf: tfVal("htf"), htfn: $("htfn").value.trim(), ltf: tfVal("ltf"), ltfn: $("ltfn").value.trim(), poi: $("poi").value.trim(), c: $("note").value.trim() };
+  var L = levels(); if (L.err) { sstep = 2; sdraw(); $("err").textContent = L.err; return; }
+  var data = { p: $("pair").value.trim().toUpperCase(), b: $("bias").value, htf: tfVal("htf"), htfn: $("htfn").value.trim(), ltf: tfVal("ltf"), ltfn: $("ltfn").value.trim(), poi: $("poi").value.trim(), c: $("note").value.trim(), ep: L.ep, sl: L.sl, tp: L.tp, rr: L.rr, al: $("sal").checked };
   $("snext").disabled = true;
   try {
-    if (editS) await updateDoc(doc(col, editS), data);
-    else { data.s = "Waiting"; data.createdAt = serverTimestamp(); await addDoc(col, data); }
+    if (editS) {
+      var old = items.filter(function (x) { return x.id === editS; })[0];
+      if (!old || old.ep !== L.ep || old.al === false && data.al) data.alerted = false; // new entry price: alert again
+      await updateDoc(doc(col, editS), data);
+    } else { data.s = "Waiting"; data.alerted = false; data.createdAt = serverTimestamp(); await addDoc(col, data); }
     resetSetupForm(); sf = "All"; sp = 1; go("setuplist");
   } catch (e) { $("err").textContent = friendlyError(e.code) + " (" + (e.code || "") + ")"; }
   $("snext").disabled = false;
@@ -1064,114 +1136,4 @@ var FXC = ["USD", "EUR", "GBP", "NGN", "JPY", "AUD", "CAD", "CHF", "NZD", "ZAR",
 $("fxf").value = "USD"; $("fxt").value = "NGN";
 function calcFx() {
   var a = n("fxa"), f = $("fxf").value, t = $("fxt").value, cr = n("fxr"), rate = null;
-  if (cr > 0) rate = cr; else if (FXR && FXR[f] && FXR[t]) rate = FXR[t] / FXR[f];
-  if (!(a >= 0) || rate == null) { out("fx", "fxd", "-", a >= 0 ? "Waiting for live rates. You can also enter a custom rate." : "Enter an amount."); return; }
-  out("fx", "fxd", fmt(a * rate, rate < 0.01 ? 6 : 2) + " " + t, "1 " + f + " = " + fmt(rate, rate < 1 ? 6 : 4) + " " + t + (cr > 0 ? "\nUsing your custom rate" : FXT ? "\nLive rate, updated " + FXT + " UTC" : ""));
-}
-function loadFx() {
-  if (FXR || fxBusy) return;
-  fxBusy = true; $("fxs").textContent = "Loading live rates...";
-  fetch("https://open.er-api.com/v6/latest/USD").then(function (r) { return r.json(); }).then(function (d) {
-    if (!d || !d.rates) throw new Error("no rates");
-    FXR = d.rates; FXT = (d.time_last_update_utc || "").slice(5, 22);
-    $("fxs").textContent = "Indicative market rates. Your broker or bank will differ slightly."; fxBusy = false; calcFx();
-  }).catch(function () { fxBusy = false; $("fxs").textContent = "Could not load live rates. Enter a custom rate above."; calcFx(); });
-}
-document.querySelectorAll(".fi").forEach(function (e) { e.oninput = calcFx; });
-$("fxsw").onclick = function () {
-  var f = $("fxf").value; $("fxf").value = $("fxt").value; $("fxt").value = f;
-  var cr = n("fxr"); if (cr > 0) $("fxr").value = (1 / cr).toPrecision(6);
-  calcFx();
-};
-
-/* ---------- email verification ---------- */
-$("vrs").onclick = async function () {
-  try { await sendEmailVerification(user); $("vm").textContent = "Verification email sent. Check your inbox and spam folder."; }
-  catch (e) { $("vm").textContent = e.code === "auth/too-many-requests" ? "Too many requests. Try again in a while." : friendlyError(e.code); }
-};
-$("vok").onclick = async function () {
-  try { await user.reload(); if (user.emailVerified) $("vb").style.display = "none"; else $("vm").textContent = "Not verified yet. Open the link in your email first."; }
-  catch (e) { $("vm").textContent = friendlyError(e.code); }
-};
-
-/* ---------- profile ---------- */
-$("out").onclick = function () { signOut(auth).then(function () { location.replace("login.html"); }); };
-$("pnb").onclick = async function () {
-  var v = $("pn").value.trim(); if (!v) return;
-  try { await updateProfile(user, { displayName: v }); await setDoc(doc(db, "users", user.uid), { name: v }, { merge: true }); $("hi").textContent = "Hello, " + v.split(" ")[0]; $("hav").textContent = v.charAt(0).toUpperCase(); $("mpn").textContent = v; $("pmsg").textContent = "Name saved."; } catch (e) { $("pmsg").textContent = friendlyError(e.code); }
-};
-$("pr").onclick = async function () { try { await sendPasswordResetEmail(auth, user.email); $("pmsg").textContent = "Reset link sent to " + user.email + "."; } catch (e) { $("pmsg").textContent = friendlyError(e.code); } };
-
-/* ---------- account deletion ---------- */
-var deleting = false;
-function acctReset() {
-  $("acctpanel").style.display = "none"; $("acctopen").style.display = "";
-  $("acctagree").checked = false; $("acctpw").value = ""; $("accterr").textContent = "";
-  $("acctgo").disabled = false; $("acctcancel").disabled = false; $("acctgo").textContent = "Permanently delete my account";
-}
-$("acctopen").onclick = function () { $("acctpanel").style.display = ""; $("acctopen").style.display = "none"; $("acctpw").focus(); };
-$("acctcancel").onclick = acctReset;
-async function wipeSub(name, uid) {
-  var c = collection(db, "users", uid, name);
-  for (;;) {
-    var s = await getDocs(query(c, limit(400)));
-    if (s.empty) break;
-    var b = writeBatch(db); s.docs.forEach(function (d) { b.delete(d.ref); }); await b.commit();
-  }
-}
-$("acctgo").onclick = async function () {
-  var err = $("accterr"); err.textContent = "";
-  if (!user) return;
-  if (!$("acctagree").checked) { err.textContent = "Tick the box to confirm you understand."; return; }
-  var pw = $("acctpw").value;
-  if (!pw) { $("acctpw").focus(); err.textContent = "Enter your password to confirm."; return; }
-  var uid = user.uid;
-  $("acctgo").disabled = true; $("acctcancel").disabled = true; $("acctgo").textContent = "Checking password...";
-  try { await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, pw)); }
-  catch (e) {
-    $("acctgo").disabled = false; $("acctcancel").disabled = false; $("acctgo").textContent = "Permanently delete my account";
-    err.textContent = (e.code === "auth/wrong-password" || e.code === "auth/invalid-credential") ? "That password is not correct." : friendlyError(e.code);
-    return;
-  }
-  $("acctgo").textContent = "Deleting...";
-  deleting = true;
-  try {
-    await wipeSub("journal", uid); await wipeSub("setups", uid); await wipeSub("notifications", uid);
-    try { await deleteDoc(doc(db, "consents", uid)); } catch (x) { console.warn(x); }
-    await deleteDoc(doc(db, "users", uid));
-    await deleteUser(user);
-    location.replace("index.html?deleted=1");
-  } catch (e) {
-    deleting = false;
-    $("acctgo").disabled = false; $("acctcancel").disabled = false; $("acctgo").textContent = "Try again";
-    err.textContent = "Deletion did not finish (" + (e.code || "error") + "). Some data may already be removed. Tap Try again, or log out and back in first if it keeps failing.";
-  }
-};
-
-/* ---------- auth + live data ---------- */
-onAuthStateChanged(auth, function (u) {
-  if (!u) { if (!deleting) location.replace("login.html"); return; }
-  user = u; $("hi").textContent = "Hello, " + (u.displayName ? u.displayName.split(" ")[0] : "trader");
-  $("hav").textContent = (u.displayName || u.email || "T").charAt(0).toUpperCase(); $("mpn").textContent = u.displayName || u.email || "Your account";
-  $("pn").value = u.displayName || ""; $("pe").textContent = u.email; $("pm").textContent = u.metadata.creationTime ? new Date(u.metadata.creationTime).toLocaleDateString() : "-";
-  if (!u.emailVerified) { $("vb").style.display = ""; $("vbe").textContent = u.email; }
-  ncol = collection(db, "users", u.uid, "notifications");
-  onSnapshot(query(ncol, orderBy("createdAt", "desc")), function (snap) {
-    nitems = snap.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; });
-    alerts(); if ($("v-alerts").classList.contains("on")) markRead();
-  }, function () {});
-  col = collection(db, "users", u.uid, "setups");
-  jcol = collection(db, "users", u.uid, "journal");
-  onSnapshot(query(col, orderBy("createdAt", "desc")), function (snap) {
-    items = snap.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; });
-    sloaded = true; sfail = ""; setStatus("Connected. Saved to your account", "ok"); srender(); drawSheet();
-  }, function (e) { sloaded = true; sfail = friendlyError(e.code); setStatus("Database error: " + (e.code || "unknown"), "bad"); srender(); });
-  onSnapshot(query(jcol, orderBy("createdAt", "desc")), function (snap) {
-    jitems = snap.docs.map(function (d) { var x = d.data(); x.id = d.id; return x; });
-    jloaded = true; jfail = ""; trender(); irender(); home(); drawSheet();
-  }, function (e) { jloaded = true; jfail = friendlyError(e.code); trender(); irender(); home(); });
-});
-resetSetupForm();
-</script>
-</body>
-</html>
+  if (cr > 0) rate = cr; else if (FXR && FXR[f] && FXR[t]) rate = FXR[t] / FXR[f]
