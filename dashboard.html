@@ -237,6 +237,12 @@ body.kb .fbar{bottom:0}
 .go.off{background:var(--s2);color:var(--mute);border:1px dashed var(--line);font-weight:600}
 button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}}
+/* TradingView chart */
+.tvbox{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--s1)}
+.tvbox .empty{padding:40px 16px}
+.tradingview-widget-copyright{font-size:11px;color:var(--mute);text-align:center;padding:4px 8px;line-height:1.3}
+.tradingview-widget-copyright a{color:var(--y)}
+.chd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.chd h2{margin:0}
 </style>
 </head>
 <body>
@@ -351,6 +357,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
       <div class="stg rv2" id="s4"><h2>Review your setup</h2><div id="rev"></div></div>
       <div class="err" id="err"></div>
     </div>
+    <div class="card" id="schart"><div class="chd"><h2>Chart</h2><button class="btn o sm" id="sbtn" type="button">Show chart</button></div>
+      <div class="tabs" id="stf" style="display:none;margin-bottom:10px"></div><div class="tvbox" id="sbox" style="display:none"></div></div>
     <div class="fbar"><button class="btn o" id="sback" type="button">Cancel</button><button class="btn" id="snext" type="button">Continue</button></div>
   </div>
 
@@ -363,6 +371,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
   <!-- MENU -->
   <div class="view" id="v-menu">
     <div class="card flush">
+      <a class="mrow" href="#chart"><span class="mic"><svg viewBox="0 0 24 24"><path d="M7 3v3M7 18v3M17 6v3M17 19v-2"/><rect x="5" y="6" width="4" height="12" rx="1"/><rect x="15" y="9" width="4" height="8" rx="1"/></svg></span><span class="grow"><b>Chart</b><small>Live TradingView charts</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
       <a class="mrow" href="#calc"><span class="mic"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg></span><span class="grow"><b>Calculators</b><small>Lot size, risk, drawdown and more</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
       <a class="mrow" href="#brokers"><span class="mic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span><span class="grow"><b>Top brokers</b><small>Online brokers to explore</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
       <a class="mrow" href="#prop"><span class="mic"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a3 3 0 003 3M16 6h4v1a3 3 0 01-3 3M12 13v4M8 21h8M10 17h4"/></svg></span><span class="grow"><b>Prop firms</b><small>Funded trader programmes</small></span><svg class="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></a>
@@ -429,6 +438,15 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--y2);outline-offset:
       <div class="g2"><div><label>Win rate (% of trades you win)</label><input class="ei" id="wr" inputmode="decimal"></div><div></div>
       <div><label>Average win ($)</label><input class="ei" id="aw" inputmode="decimal" placeholder="e.g. 150"></div><div><label>Average loss ($)</label><input class="ei" id="al" inputmode="decimal" placeholder="e.g. 100"></div></div>
       <div class="res"><b id="ex">-</b><span id="exd">(win rate &times; avg win) &minus; (loss rate &times; avg loss)</span></div></div></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="view" id="v-chart">
+    <div class="card"><label for="cq">Instrument</label>
+      <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="cq" placeholder="e.g. XAUUSD, EURUSD, BTCUSD" autocomplete="off" autocapitalize="characters" aria-label="Instrument"></div>
+      <div class="tabs" id="cchips" style="margin-top:10px"></div></div>
+    <div class="tvbox" id="cbox"></div>
+    <p class="note">Charts by TradingView. Prices may be delayed or differ slightly from your broker. Use the chart's own search to change instrument or timeframe.</p>
   </div>
 
   <div class="view" id="v-brokers"><p class="note" style="margin:-4px 0 14px">Some links below are affiliate links. We may earn a commission if you open an account, at no extra cost to you.</p><div id="bl"></div><p class="note">Not financial advice or an endorsement. Check that a broker is regulated and available in your country, and read the fees and withdrawal terms before you deposit. Trading carries risk.</p></div>
@@ -534,12 +552,77 @@ function markRead() {
 }
 
 /* routing */
-var NAVMAP = {home:"home",history:"history",journal:"history",setuplist:"setuplist",setups:"setuplist",insights:"insights",menu:"menu",calc:"menu",brokers:"menu",prop:"menu",alerts:"menu",profile:"menu",privacy:"menu"};
-var BACK = {calc:"menu",brokers:"menu",prop:"menu",alerts:"menu",profile:"menu",privacy:"menu",journal:"history",setups:"setuplist"};
+/* ---------- TradingView chart (free embeddable Advanced Chart widget) ---------- */
+var TVTF = {"1M":"1","5M":"5","15M":"15","30M":"30","1H":"60","2H":"120","4H":"240","1D":"D"};
+function tvInterval(tf) {
+  tf = String(tf || "").toUpperCase(); if (TVTF[tf]) return TVTF[tf];
+  var m = tf.match(/^(\d+)([MHDW])$/); if (!m) return "60";
+  var n = +m[1]; return m[2] === "M" ? String(n) : m[2] === "H" ? String(n * 60) : m[2] === "W" ? "W" : (n === 1 ? "D" : String(n * 1440));
+}
+var TVA = {XAUUSD:"OANDA:XAUUSD",GOLD:"OANDA:XAUUSD",XAGUSD:"OANDA:XAGUSD",SILVER:"OANDA:XAGUSD",NAS100:"OANDA:NAS100USD",US100:"OANDA:NAS100USD",USTEC:"OANDA:NAS100USD",US30:"OANDA:US30USD",DJ30:"OANDA:US30USD",SPX500:"OANDA:SPX500USD",US500:"OANDA:SPX500USD",GER40:"OANDA:DE30EUR",DE40:"OANDA:DE30EUR",DAX:"OANDA:DE30EUR",UK100:"OANDA:UK100GBP",USOIL:"TVC:USOIL",WTI:"TVC:USOIL",XTIUSD:"TVC:USOIL",DXY:"TVC:DXY",BTCUSD:"COINBASE:BTCUSD",ETHUSD:"COINBASE:ETHUSD"};
+var TVC = ["USD","EUR","GBP","JPY","AUD","NZD","CAD","CHF"];
+function tvSymbol(raw) {
+  var v = String(raw || "").trim().toUpperCase().replace(/\s+/g, ""); if (!v) return "";
+  if (v.indexOf(":") > -1) return v; if (TVA[v]) return TVA[v];
+  if (/^[A-Z]{6}$/.test(v) && TVC.indexOf(v.slice(0, 3)) > -1 && TVC.indexOf(v.slice(3)) > -1) return "FX:" + v;
+  if (/USDT$/.test(v)) return "BINANCE:" + v;
+  return v;
+}
+function mountChart(box, raw, tf, h) {
+  var sym = tvSymbol(raw), iv = tvInterval(tf), k = sym + "|" + iv;
+  if (!sym) return;
+  if (box._k === k && box.querySelector("iframe")) return;
+  box._k = k; box.style.height = h + "px";
+  box.innerHTML = '<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 24px);width:100%"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/' + encodeURIComponent(sym.replace(":", "-")) + '/" rel="noopener nofollow" target="_blank">' + esc(String(raw).trim().toUpperCase()) + ' chart</a> by TradingView</div></div>';
+  var sc = document.createElement("script"); sc.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"; sc.async = true;
+  sc.text = JSON.stringify({ autosize: true, symbol: sym, interval: iv, timezone: "Etc/UTC", theme: "dark", style: "1", locale: "en", backgroundColor: "#1C2028", gridColor: "rgba(255,255,255,0.06)", allow_symbol_change: true, withdateranges: true, hide_side_toolbar: false, save_image: false, details: false, hotlist: false, calendar: false, support_host: "https://www.tradingview.com" });
+  box.firstChild.appendChild(sc);
+  clearTimeout(box._t);
+  box._t = setTimeout(function () { if (!box.querySelector("iframe")) box.insertAdjacentHTML("beforeend", '<div class="empty">The chart could not load. Check your connection, or turn off your ad blocker for this site.</div>'); }, 9000);
+}
+/* Chart page */
+var cSym = "";
+function chartChips() {
+  var cnt = {}; jitems.concat(items).forEach(function (i) { if (i.p) cnt[i.p] = (cnt[i.p] || 0) + 1; });
+  var mine = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 8);
+  var all = mine.concat(["XAUUSD", "EURUSD", "GBPUSD", "BTCUSD"].filter(function (x) { return mine.indexOf(x) < 0; })).slice(0, 10);
+  $("cchips").innerHTML = all.map(function (p) { return '<button type="button" data-s="' + esc(p) + '" class="' + (p === cSym ? "on" : "") + '">' + esc(p) + "</button>"; }).join("");
+}
+function chartLoad() {
+  var v = $("cq").value.trim().toUpperCase(); if (!v) return;
+  cSym = v; try { localStorage.setItem("tb-chart", v); } catch (e) {}
+  chartChips(); mountChart($("cbox"), v, "1H", Math.max(380, window.innerHeight - 340));
+}
+function chartOpen() {
+  if (!cSym) { try { cSym = localStorage.getItem("tb-chart") || ""; } catch (e) {} }
+  if (!cSym) cSym = "XAUUSD";
+  $("cq").value = cSym; chartChips(); chartLoad();
+}
+$("cq").onchange = chartLoad;
+$("cq").onkeydown = function (e) { if (e.key === "Enter") { e.preventDefault(); chartLoad(); this.blur(); } };
+$("cchips").onclick = function (e) { var b = e.target.closest("button"); if (b) { $("cq").value = b.getAttribute("data-s"); chartLoad(); } };
+/* Chart on the setup page: follows the pair and the two timeframes */
+var schOpen = false, schTab = "h";
+function schartRefresh() {
+  var sym = $("pair").value.trim();
+  var bt = schOpen ? "Hide chart" : "Show chart"; if ($("sbtn").textContent !== bt) $("sbtn").textContent = bt;
+  $("stf").style.display = $("sbox").style.display = schOpen ? "" : "none";
+  if (!schOpen) return;
+  var th = '<button type="button" data-t="h" class="' + (schTab === "h" ? "on" : "") + '">Big picture ' + esc(tfVal("htf")) + '</button><button type="button" data-t="l" class="' + (schTab === "l" ? "on" : "") + '">Entry ' + esc(tfVal("ltf")) + "</button>";
+  if ($("stf")._h !== th) { $("stf")._h = th; $("stf").innerHTML = th; } // only redraw when it changed, so a tap is never lost
+  if (!sym) { $("sbox")._k = ""; $("sbox").style.height = ""; $("sbox").innerHTML = '<div class="empty">Enter the pair or instrument above to see its chart.</div>'; return; }
+  mountChart($("sbox"), sym, schTab === "h" ? tfVal("htf") : tfVal("ltf"), 380);
+}
+$("sbtn").onclick = function () { schOpen = !schOpen; schartRefresh(); };
+$("stf").onclick = function (e) { var b = e.target.closest("button"); if (b) { schTab = b.getAttribute("data-t"); schartRefresh(); } };
+["pair", "htf", "ltf", "htfc", "ltfc"].forEach(function (id) { $(id).addEventListener("change", schartRefresh); });
+
+var NAVMAP = {home:"home",history:"history",journal:"history",setuplist:"setuplist",setups:"setuplist",insights:"insights",menu:"menu",chart:"menu",calc:"menu",brokers:"menu",prop:"menu",alerts:"menu",profile:"menu",privacy:"menu"};
+var BACK = {chart:"menu",calc:"menu",brokers:"menu",prop:"menu",alerts:"menu",profile:"menu",privacy:"menu",journal:"history",setups:"setuplist"};
 function titleFor(v) {
   if (v === "journal") return editT ? "Edit Trade" : "Record a Trade";
   if (v === "setups") return editS ? "Edit Setup" : "Create a Setup";
-  return {history:"My Trades",setuplist:"My Setups",insights:"Insights",menu:"Menu",calc:"Calculators",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile",privacy:"Data & Privacy"}[v] || "Home";
+  return {history:"My Trades",setuplist:"My Setups",insights:"Insights",menu:"Menu",chart:"Chart",calc:"Calculators",brokers:"Top brokers",prop:"Prop firms",alerts:"Notifications",profile:"Profile",privacy:"Data & Privacy"}[v] || "Home";
 }
 var curView = "home";
 function show(v) {
@@ -551,6 +634,7 @@ function show(v) {
   $("pback").classList.toggle("on", !!BACK[v]); $("pback").setAttribute("data-go", BACK[v] || "home");
   document.title = titleFor(v) + " | Trade Buddy"; window.scrollTo(0, 0);
   if (v === "alerts") markRead();
+  if (v === "chart") chartOpen();
   if (v === "calc" && !$("c-fx").classList.contains("on")) {}
 }
 function go(v) { if (location.hash === "#" + v) show(v); else location.hash = v; }
@@ -703,7 +787,7 @@ function drawSheet() {
     h += '<div class="shs">Trade overview</div>' + kv("Date", fmtD(it.dt)) + kv("Recorded", rec) + kv("Result", it.pl != null ? rtxt : "") + kv("Followed plan", it.fp === "Yes" ? "Yes" : it.fp === "No" ? "No, you broke your plan" : "");
     if (it.em || it.n) h += '<div class="shs">Reflection</div>' + kv("Felt", it.em) + kv("Notes", it.n);
     if (SH.cf === "del") h += '<div class="cfm"><p>Delete this ' + esc(it.p) + ' trade? This can\'t be undone.</p><div class="acts" style="margin-top:0"><button class="btn dng" data-sh="delok">Yes, delete</button><button class="btn o" data-sh="cfno">Keep it</button></div></div>';
-    else h += '<div class="acts"><button class="btn" data-sh="edit">Edit trade</button><button class="btn dng" data-sh="del">Delete trade</button><button class="btn o full" data-sh="close">Close</button></div>';
+    else h += '<div class="acts"><button class="btn" data-sh="edit">Edit trade</button><button class="btn o" data-sh="chart">View chart</button><button class="btn dng" data-sh="del">Delete trade</button><button class="btn o full" data-sh="close">Close</button></div>';
   } else {
     var sb = it.b === "Bullish", st = it.s;
     $("shE").textContent = "Setup details"; $("shT").textContent = it.p;
@@ -718,7 +802,7 @@ function drawSheet() {
       else if (st === "At POI") b += '<button class="btn full" data-sh="stat" data-v="Entered">Mark as Entered</button>';
       else if (st === "Entered") b += '<button class="btn full" data-sh="stat" data-v="Done">Mark as Completed</button>';
       if (st !== "Done") b += '<button class="btn o" data-sh="log">Record a trade</button>';
-      b += '<button class="btn o" data-sh="sedit">Edit setup</button>';
+      b += '<button class="btn o" data-sh="chart">View chart</button><button class="btn o" data-sh="sedit">Edit setup</button>';
       if (st === "Waiting" || st === "At POI") b += '<button class="btn dng" data-sh="cancel">Cancel setup</button>';
       b += '<button class="btn dng" data-sh="del">Delete setup</button><button class="btn o full" data-sh="close">Close</button>';
       h += '<div class="acts">' + b + '</div>';
@@ -737,6 +821,7 @@ $("sheet").onclick = async function (e) {
   if (a === "cancel") { SH.cf = "cancel"; return drawSheet(); }
   if (a === "cfno") { SH.cf = ""; return drawSheet(); }
   var it = (k === "t" ? jitems : items).filter(function (x) { return x.id === id; })[0]; if (!it) return closeSheet();
+  if (a === "chart") { cSym = it.p; try { localStorage.setItem("tb-chart", it.p); } catch (e) {} closeSheet(); return go("chart"); }
   if (a === "edit") { closeSheet(); return editTrade(it); }
   if (a === "sedit") { closeSheet(); return editSetup(it); }
   if (a === "log") {
@@ -804,6 +889,7 @@ function editSetup(it) {
   go("setups"); $("pt").textContent = titleFor("setups"); sdraw();
 }
 function sdraw() {
+  $("schart").style.display = sstep < 4 ? "" : "none"; schartRefresh();
   [1, 2, 3, 4].forEach(function (n) { $("s" + n).classList.toggle("on", n === sstep); });
   document.querySelectorAll("#sbar i").forEach(function (e, i) { e.classList.toggle("on", i < Math.min(sstep, 3)); });
   $("stl").innerHTML = sstep < 4 ? "Step <b>" + sstep + " of 3</b> &middot; " + STL[sstep - 1] : "<b>Review</b> &middot; check everything, then save";
@@ -1088,4 +1174,4 @@ onAuthStateChanged(auth, function (u) {
 resetSetupForm();
 </script>
 </body>
-                                                                                                                                          </html>
+</html>
